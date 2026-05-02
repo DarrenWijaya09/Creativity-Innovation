@@ -4,444 +4,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>VEXORA · Marketplace Modern</title>
-    <!-- Tailwind CSS + Google Fonts (Inter) -->
+    <title>VEXORA — Temukan Penyedia Jasa Terbaik</title>
+    <!-- Tailwind CSS CDN + Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Override default Tailwind config untuk shadow/ring lebih halus -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        'sans': ['Inter', 'system-ui', 'Segoe UI', 'sans-serif'],
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
                     },
-                    boxShadow: {
-                        'soft': '0 8px 20px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02)',
-                        'lift': '0 20px 25px -12px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.02)',
-                    }
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#EFF6FF',
+                        accent: '#FEF9C3',
+                    },
                 }
             }
         }
     </script>
     <style>
-        /* custom smooth transition + hide scrollbar but keep functionality */
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+        .hover-lift {
+            transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
         }
 
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .hover-lift:hover {
+            transform: translateY(-6px);
         }
 
-        .transition-ease {
-            transition: all 0.2s ease;
+        .card-image-zoom {
+            overflow: hidden;
         }
 
-        /* collapsible accordion simple tanpa JS - untuk filter demo (detail manual) */
-        /* tapi kita gunakan pendekatan detail/summary untuk aksesibilitas */
-        details>summary {
-            list-style: none;
-            cursor: pointer;
+        .card-image-zoom img {
+            transition: transform 0.6s ease;
         }
 
-        details>summary::-webkit-details-marker {
-            display: none;
+        .card-image-zoom:hover img {
+            transform: scale(1.06);
+        }
+
+        .filter-sidebar {
+            scrollbar-width: thin;
         }
     </style>
 </head>
 
-<body class="bg-gray-50 font-sans antialiased">
+<body class="font-sans text-gray-800 bg-gray-50">
 
-    <!-- ========== TOP BAR (extra small) ========== -->
-    <div class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-30">
-        <div
-            class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between text-xs text-gray-500 gap-x-4 gap-y-1">
-            <div class="flex items-center gap-1">
-                <span class="text-blue-600 font-medium">✨ Selamat Datang</span>
-                <span class="hidden sm:inline text-gray-400">|</span>
+    <!-- ==================== STICKY NAVBAR (SAME AS HOMEPAGE) ==================== -->
+    <header
+        class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 transition-all duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="{{ asset('assets/images/logo-copy.jpeg') }}" alt="VEXORA"
+                    class="h-8 md:h-10 w-auto object-contain">
             </div>
-            <div class="flex flex-wrap items-center gap-4 font-medium">
-                <a href="#" class="hover:text-blue-600 transition">Vexora Profile</a>
-                <a href="#" class="hover:text-blue-600 transition">Ruang Edukasi Vexora</a>
-                <a href="#" class="hover:text-blue-600 transition">Forum</a>
-                <a href="#" class="hover:text-blue-600 transition">Promo Hari Ini</a>
-            </div>
-        </div>
-    </div>
+            <nav class="hidden md:flex items-center space-x-8 text-gray-600 font-medium">
+                <a href="/" class="hover:text-primary transition text-sm">Beranda</a>
+                <a href="/catalog" class="hover:text-primary transition text-sm">Cari Jasa</a>
+                <a href="#" class="hover:text-primary transition text-sm">Penyedia</a>
+                <a href="#" class="hover:text-primary transition text-sm">Tentang</a>
+                <a href="#" class="hover:text-primary transition text-sm">Blog</a>
+                <a href="#" class="hover:text-primary transition text-sm">Kontak</a>
+            </nav>
+            <div class="flex items-center gap-5">
 
-    <!-- ========== MAIN NAVBAR ========== -->
-    <header class="sticky top-[41px] z-20 bg-white/90 backdrop-blur-sm border-b border-gray-200 shadow-sm">
-        <div
-            class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
-            <!-- Logo -->
-            <div class="flex-shrink-0">
-                <img src="{{ asset('assets/images/logo-copy.jpeg') }}" alt="VEXORA Logo" class="h-8 w-auto">
-            </div>
-
-            <!-- Search Bar - tengah, responsive -->
-            <div class="flex-1 max-w-2xl mx-4">
-                <div class="relative">
-                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    <input type="text" placeholder="Cari di Vexora"
-                        class="w-full pl-11 pr-4 py-3 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 transition shadow-sm text-sm">
+                <!-- Search -->
+                <div class="relative hidden md:block">
+                    <input type="text" placeholder="Cari jasa..."
+                        class="pl-10 pr-4 py-2 rounded-full border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-48">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 </div>
-            </div>
 
-            <!-- Ikon kanan + toggle role -->
-            <div class="flex items-center gap-3 sm:gap-4">
-                <!-- Cart, Notif, Message -->
-                <button class="relative p-2 rounded-full hover:bg-gray-100 transition">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 15v6"></path>
-                    </svg>
-                    <span
-                        class="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">3</span>
-                </button>
-                <button class="p-2 rounded-full hover:bg-gray-100 transition">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                            d="M15 17h5l-1.4-2.1A8 8 0 0012 5a8 8 0 00-6.6 12.6L4 17h5m6 0v2a3 3 0 11-6 0v-2m6 0H9">
-                        </path>
-                    </svg>
-                </button>
-                <button class="p-2 rounded-full hover:bg-gray-100 transition">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.5-1L4 21l1.5-3.5A9 9 0 0121 12z">
-                        </path>
-                    </svg>
+                <!-- Calendar -->
+                {{-- <i class="fas fa-calendar-alt text-lg text-gray-500 hover:text-primary cursor-pointer transition"></i> --}}
+
+                <!-- Auth -->
+                @guest
+                    <div class="flex items-center gap-2">
+                        <a href="/login" class="text-sm text-gray-600 hover:text-primary">Sign In</a>
+                        <a href="/register" class="text-sm bg-primary text-white px-3 py-1.5 rounded-full">Sign Up</a>
+                    </div>
+                @endguest
+
+                @auth
+                    <div class="relative group">
+                        <i class="fas fa-user-circle text-xl text-gray-600 cursor-pointer"></i>
+
+                        <div
+                            class="absolute right-0 mt-2 w-40 bg-white border rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition">
+                            <a href="/dashboard" class="block px-4 py-2 text-sm hover:bg-gray-50">Dashboard</a>
+                            <form method="POST" action="/logout">
+                                @csrf
+                                <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
+
+                <!-- Mobile menu -->
+                <button class="block md:hidden text-gray-700">
+                    <i class="fas fa-bars text-xl"></i>
                 </button>
 
-                <!-- Toggle pill toko/user -->
-                <div class="flex bg-gray-100 rounded-full p-1 shadow-inner">
-                    <button
-                        class="px-4 py-1.5 text-xs font-semibold rounded-full bg-white text-blue-600 shadow-sm transition">Toko</button>
-                    <button
-                        class="px-4 py-1.5 text-xs font-semibold rounded-full text-gray-600 hover:text-gray-900 transition">User</button>
-                </div>
             </div>
         </div>
     </header>
 
-    <!-- ========== MAIN LAYOUT: SIDEBAR (desktop/tablet) + MAIN CONTENT ========== -->
-    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
-        <div class="flex flex-wrap lg:flex-nowrap gap-6">
+    <main class="max-w-7xl mx-auto px-6 lg:px-8 py-10">
 
-            <!-- ========== SIDEBAR FILTER (Desktop & Tablet tampil, mobile hidden jadi drawer tapi kita gunakan hidden lg:block) ========== -->
-            <aside class="w-full lg:w-80 shrink-0 hidden lg:block transition-all">
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sticky top-28">
-                    <h2
-                        class="text-lg font-bold text-gray-800 flex items-center gap-2 pb-3 border-b border-gray-100 mb-4">
-                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
-                            </path>
-                        </svg>
-                        Filter
-                    </h2>
+        <!-- ==================== PAGE TITLE ==================== -->
+        <div class="mb-8 text-center md:text-left">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Temukan Penyedia Jasa Terbaik</h1>
+            <p class="text-gray-500 mt-2">Jelajahi berbagai layanan profesional sesuai kebutuhan Anda</p>
+        </div>
 
-                    <!-- LOKASI (accordion menggunakan details) -->
-                    <details class="group mb-5 border-b border-gray-100 pb-4" open>
-                        <summary
-                            class="flex justify-between items-center cursor-pointer list-none font-semibold text-gray-700 py-1">
-                            Lokasi
-                            <span class="text-blue-500 text-sm transition-transform group-open:rotate-180">▼</span>
-                        </summary>
-                        <div class="mt-3 space-y-2 pl-1">
-                            <label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox"
-                                    class="rounded text-blue-500"> DKI Jakarta</label>
-                            <label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox"
-                                    class="rounded"> Jawa Barat</label>
-                            <label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox"
-                                    class="rounded"> Jawa Tengah</label>
-                            <label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox"
-                                    class="rounded"> Jawa Timur</label>
-                            <label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox"
-                                    class="rounded"> Bali</label>
-                            <label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox"
-                                    class="rounded"> Ubud Selatan</label>
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- ==================== LEFT SIDEBAR (FILTERS) ==================== -->
+            <aside class="lg:w-80 flex-shrink-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24 filter-sidebar">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="font-bold text-lg text-gray-900">Filter</h2>
+                        <button class="text-primary text-sm font-medium hover:underline">Reset Filter</button>
+                    </div>
+
+                    <!-- Kategori Jasa -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-800 mb-3">Kategori Jasa</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary focus:ring-primary/20"><span>Les
+                                    Privat</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Desain & Kreatif</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Teknologi & IT</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Perbaikan Rumah</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Kesehatan &
+                                    Fitness</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Jasa Harian</span></label>
                         </div>
-                    </details>
+                    </div>
 
-                    <!-- HARGA (min & max input) -->
-                    <div class="mb-5 border-b border-gray-100 pb-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Harga</h3>
+                    <!-- Lokasi -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-800 mb-3">Lokasi</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Jakarta</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Bandung</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Surabaya</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Online</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-800 mb-3">Rating</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="radio" name="rating" class="text-primary"><span
+                                    class="flex items-center">⭐ 4 ke atas</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="radio" name="rating" class="text-primary"><span
+                                    class="flex items-center">⭐ 3 ke atas</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Harga -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-800 mb-3">Harga</h3>
                         <div class="flex gap-2 items-center">
                             <input type="number" placeholder="Min"
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-blue-200 focus:border-blue-300">
+                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary">
                             <span class="text-gray-400">—</span>
                             <input type="number" placeholder="Max"
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-blue-200 focus:border-blue-300">
+                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary">
                         </div>
                     </div>
 
-                    <!-- KONDISI (Baru/Bekas) + Rating (checkbox bintang) + Penawaran -->
-                    <div class="mb-5 border-b border-gray-100 pb-4">
-                        <h3 class="font-semibold text-gray-700 mb-2">Kondisi</h3>
-                        <div class="flex gap-4"><label class="flex items-center gap-1 text-sm"><input type="radio"
-                                    name="kondisi" class="accent-blue-500"> Baru</label><label
-                                class="flex items-center gap-1 text-sm"><input type="radio" name="kondisi">
-                                Bekas</label></div>
+                    <!-- Tipe Layanan -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-800 mb-3">Tipe Layanan</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Online</span></label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"><input
+                                    type="checkbox" class="rounded text-primary"><span>Offline (Datang ke
+                                    lokasi)</span></label>
+                        </div>
                     </div>
-                    <div class="mb-5 border-b border-gray-100 pb-4">
-                        <h3 class="font-semibold text-gray-700 mb-2">⭐ Rating</h3>
-                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded"> ★ 4 ke
-                            atas</label>
-                        <label class="flex items-center gap-2 text-sm mt-1"><input type="checkbox" class="rounded"> ★
-                            3.5+</label>
-                    </div>
-                    <div class="mb-5 border-b border-gray-100 pb-4">
-                        <h3 class="font-semibold text-gray-700 mb-2">Penawaran</h3>
-                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded"> COD
-                            (Bayar di Tempat)</label>
-                        <label class="flex items-center gap-2 text-sm mt-1"><input type="checkbox" class="rounded">
-                            Diskon / Harga Dokon</label>
-                    </div>
-                    <div class="mt-4">
-                        <button
-                            class="w-full bg-blue-50 text-blue-700 text-sm font-medium py-2 rounded-xl hover:bg-blue-100 transition">Terapkan
-                            Filter</button>
-                    </div>
+
+                    <button
+                        class="w-full mt-4 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition">Reset
+                        Filter</button>
                 </div>
             </aside>
 
-            <!-- ========== MAIN CONTENT (produk + tab) ========== -->
-            <div class="flex-1 min-w-0">
-                <!-- Tab Produk / Toko -->
-                <div class="flex border-b border-gray-200 gap-6 mb-6">
+            <!-- ==================== RIGHT CONTENT (SERVICE LISTINGS) ==================== -->
+            <div class="flex-1">
+                <!-- TOP BAR: Result info + Sorting -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <p class="text-gray-600 text-sm">Menampilkan <span class="font-semibold text-gray-900">120</span>
+                        penyedia jasa</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">Urutkan:</span>
+                        <select
+                            class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white">
+                            <option>Terpopuler</option>
+                            <option>Rating Tertinggi</option>
+                            <option>Harga Terendah</option>
+                            <option>Harga Tertinggi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SERVICE CARDS GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @php
+                        $services = [
+                            [
+                                'title' => 'Les Matematika SMA',
+                                'provider' => 'Bunda Sari',
+                                'rating' => 5,
+                                'reviews' => 128,
+                                'location' => 'Jakarta Selatan',
+                                'price' => 50000,
+                                'desc' => 'Metode mudah dan menyenangkan, guru berpengalaman 10+ tahun',
+                                'img' =>
+                                    'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop',
+                                'badge' => 'Online & Offline',
+                            ],
+                            [
+                                'title' => 'Desain Logo Profesional',
+                                'provider' => 'Design Studio ID',
+                                'rating' => 5,
+                                'reviews' => 342,
+                                'location' => 'Online',
+                                'price' => 250000,
+                                'desc' => 'Desain modern dan unik sesuai identitas brand Anda',
+                                'img' =>
+                                    'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=300&fit=crop',
+                                'badge' => 'Online',
+                            ],
+                            [
+                                'title' => 'Perbaikan AC & Kulkas',
+                                'provider' => 'Technician Plus',
+                                'rating' => 4,
+                                'reviews' => 89,
+                                'location' => 'Jabodetabek',
+                                'price' => 150000,
+                                'desc' => 'Teknisi profesional, garansi 30 hari',
+                                'img' =>
+                                    'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=300&fit=crop',
+                                'badge' => 'Offline',
+                            ],
+                            [
+                                'title' => 'Les Bahasa Inggris',
+                                'provider' => 'English Buddy',
+                                'rating' => 5,
+                                'reviews' => 256,
+                                'location' => 'Jakarta Utara',
+                                'price' => 75000,
+                                'desc' => 'Native speaker, jadwal fleksibel',
+                                'img' =>
+                                    'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=300&fit=crop',
+                                'badge' => 'Online & Offline',
+                            ],
+                            [
+                                'title' => 'Website Company Profile',
+                                'provider' => 'WebDev Expert',
+                                'rating' => 5,
+                                'reviews' => 94,
+                                'location' => 'Online',
+                                'price' => 1500000,
+                                'desc' => 'Responsif, SEO friendly, cepat selesai',
+                                'img' =>
+                                    'https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&h=300&fit=crop',
+                                'badge' => 'Online',
+                            ],
+                            [
+                                'title' => 'Pijat Kebugaran',
+                                'provider' => 'Sehat Sejati',
+                                'rating' => 4,
+                                'reviews' => 67,
+                                'location' => 'Jakarta Pusat',
+                                'price' => 120000,
+                                'desc' => 'Terapis profesional, alat lengkap',
+                                'img' =>
+                                    'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=400&h=300&fit=crop',
+                                'badge' => 'Offline',
+                            ],
+                        ];
+                    @endphp
+                    @foreach ($services as $service)
+                        <div
+                            class="group bg-white rounded-2xl hover:shadow-xl transition-all duration-300 hover-lift border border-gray-100 overflow-hidden">
+                            <div class="card-image-zoom relative">
+                                <img src="{{ $service['img'] }}" alt="{{ $service['title'] }}"
+                                    class="w-full h-48 object-cover">
+                                <span
+                                    class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-gray-700 shadow-sm">{{ $service['badge'] }}</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-lg">{{ $service['title'] }}</h3>
+                                        <p class="text-gray-500 text-sm mt-0.5">{{ $service['provider'] }}</p>
+                                    </div>
+                                    <div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-full">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <span
+                                            class="text-sm font-semibold text-gray-800">{{ $service['rating'] }}</span>
+                                        <span class="text-xs text-gray-500">({{ $service['reviews'] }})</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-500 text-sm line-clamp-2 mb-3">{{ $service['desc'] }}</p>
+                                <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+                                    <span class="flex items-center gap-1"><i
+                                            class="fas fa-map-marker-alt text-primary/70 text-xs"></i>
+                                        {{ $service['location'] }}</span>
+                                    <span class="flex items-center gap-1"><i
+                                            class="fas fa-credit-card text-primary/70 text-xs"></i> Mulai</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span
+                                            class="text-2xl font-extrabold text-primary">Rp{{ number_format($service['price'], 0, ',', '.') }}</span>
+                                        @if ($service['price'] < 200000)
+                                            <span class="text-xs text-gray-400 ml-1">/ sesi</span>
+                                        @endif
+                                    </div>
+                                    <a href="#"
+                                        class="px-5 py-2 bg-primary/10 text-primary font-semibold text-sm rounded-xl hover:bg-primary hover:text-white transition-all duration-200">Pesan
+                                        Sekarang</a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- EMPTY STATE (hidden, shown only if no results) - optional -->
+                <!-- <div class="text-center py-16">
+                    <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-700">Jasa tidak ditemukan</h3>
+                    <p class="text-gray-400 mt-1">Coba ubah filter atau cari dengan kata kunci lain</p>
+                    <button class="mt-4 text-primary font-medium">Reset Filter</button>
+                </div> -->
+
+                <!-- PAGINATION (simple) -->
+                <div class="flex justify-center gap-2 mt-10">
+                    <button class="px-3 py-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"><i
+                            class="fas fa-chevron-left text-sm"></i></button>
+                    <button class="px-3 py-2 rounded-lg bg-primary text-white">1</button>
                     <button
-                        class="pb-2 text-base font-semibold text-blue-600 border-b-2 border-blue-600">Produk</button>
-                    <button class="pb-2 text-base font-medium text-gray-500 hover:text-gray-700">Toko</button>
+                        class="px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">2</button>
+                    <button
+                        class="px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">3</button>
+                    <button
+                        class="px-3 py-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50">...</button>
+                    <button class="px-3 py-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"><i
+                            class="fas fa-chevron-right text-sm"></i></button>
                 </div>
 
-                <!-- grid produk: default 5 kolom (desktop) lg:grid-cols-5, tablet md:grid-cols-3, mobile grid-cols-2 sm:grid-cols-2 -->
+                <!-- ==================== PROMO / CTA SECTION (JADI PENYEDIA) ==================== -->
                 <div
-                    class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 gap-y-8">
-
-                    <!-- Card Produk 1 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                            <div
-                                class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-100 flex items-center justify-center text-gray-400">
-                                📦</div>
-                        </div>
-                        <div class="p-3">
-                            <h3 class="font-bold text-gray-800 truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg mt-1">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm mt-1"><span class="text-yellow-500">★</span>
-                                <span class="font-medium">5.0</span> <span class="text-gray-400 text-xs">(500+
-                                    terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1 flex items-center gap-1"><svg class="w-3 h-3"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                                    </path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>Jakarta Utara</div>
-                        </div>
-                    </div>
-                    <!-- Card 2 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">👜</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Bandung, Jabar</div>
-                        </div>
-                    </div>
-                    <!-- Card 3 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">👟</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Surabaya, Jatim</div>
-                        </div>
-                    </div>
-                    <!-- Card 4 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">⌚</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Semarang, Jateng</div>
-                        </div>
-                    </div>
-                    <!-- Card 5 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">🎧</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Bali, Denpasar</div>
-                        </div>
-                    </div>
-                    <!-- Card 6 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">📷</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Tangerang</div>
-                        </div>
-                    </div>
-                    <!-- Card 7 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">💻</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Yogyakarta</div>
-                        </div>
-                    </div>
-                    <!-- Card 8 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">📱</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Depok, Jabar</div>
-                        </div>
-                    </div>
-                    <!-- Card 9 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">🕶️</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Bekasi</div>
-                        </div>
-                    </div>
-                    <!-- Card 10 -->
-                    <div
-                        class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-lift hover:scale-105 cursor-pointer">
-                        <div class="aspect-square bg-gray-200 flex items-center justify-center text-gray-400">🧥</div>
-                        <div class="p-3">
-                            <h3 class="font-bold truncate">Nama Produk</h3>
-                            <div class="text-black font-extrabold text-lg">Rp100.000</div>
-                            <div class="flex items-center gap-1 text-sm"><span class="text-yellow-500">★</span> 5.0
-                                <span class="text-gray-400 text-xs">(500+ terjual)</span></div>
-                            <div class="text-gray-400 text-xs mt-1">📍Jakarta Pusat</div>
-                        </div>
-                    </div>
+                    class="mt-12 bg-gradient-to-r from-primary to-blue-600 rounded-3xl p-8 md:p-10 text-center text-white shadow-lg">
+                    <i class="fas fa-store text-4xl mb-4 opacity-80"></i>
+                    <h2 class="text-2xl md:text-3xl font-bold mb-2">Jadi Penyedia di VEXORA</h2>
+                    <p class="text-blue-100 max-w-lg mx-auto mb-6">Gabung dan tawarkan jasa Anda kepada ribuan pengguna
+                        yang membutuhkan layanan profesional.</p>
+                    <a href="#"
+                        class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-md">Daftar
+                        Sekarang →</a>
                 </div>
-
-                <!-- ========== LAYOUT KEDUA: TANPA SIDEBAR (opsional - contoh area tambahan) ========== -->
-                <!-- Variasi tanpa sidebar (di bawah main, menggunakan tombol "Ready Stock" di kiri atas) -->
-                <div class="mt-16 pt-4 border-t border-gray-200">
-                    <div class="flex items-center justify-between flex-wrap gap-3 mb-5">
-                        <div class="flex items-center gap-2">
-                            <button
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-medium shadow-sm transition">✅
-                                Ready Stock</button>
-                            <span class="text-gray-500 text-xs bg-gray-100 px-3 py-1.5 rounded-full">Filter cepat: stok
-                                siap kirim</span>
-                        </div>
-                        <h3 class="text-gray-700 font-semibold text-sm">✨ Tanpa Sidebar · Mode full width</h3>
-                    </div>
-                    <!-- grid produk kedua (tanpa sidebar style, layout tetap sama) -->
-                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 gap-y-8">
-                        <div
-                            class="group bg-white rounded-xl shadow-sm border hover:shadow-lift hover:scale-105 transition-all cursor-pointer">
-                            <div class="aspect-square bg-gray-200 flex items-center justify-center">⚡</div>
-                            <div class="p-3">
-                                <div class="font-bold">Flash Sale Item</div>
-                                <div class="font-extrabold">Rp99.000</div>
-                                <div class="text-xs text-gray-400">★ 4.9 | 1,2rb terjual</div>
-                                <div class="text-gray-400 text-xs">Toko Resmi</div>
-                            </div>
-                        </div>
-                        <div
-                            class="group bg-white rounded-xl shadow-sm border hover:shadow-lift hover:scale-105 transition-all cursor-pointer">
-                            <div class="aspect-square bg-gray-200 flex items-center justify-center">🎒</div>
-                            <div class="p-3">
-                                <div class="font-bold">Ready Stock</div>
-                                <div class="font-extrabold">Rp125.000</div>
-                                <div class="text-xs text-gray-400">★ 5.0 | 320+ terjual</div>
-                                <div class="text-gray-400 text-xs">Toko Official</div>
-                            </div>
-                        </div>
-                        <div
-                            class="group bg-white rounded-xl shadow-sm border hover:shadow-lift hover:scale-105 transition-all cursor-pointer">
-                            <div class="aspect-square bg-gray-200 flex items-center justify-center">📚</div>
-                            <div class="p-3">
-                                <div class="font-bold">Buku Edukasi</div>
-                                <div class="font-extrabold">Rp75.000</div>
-                                <div class="text-xs text-gray-400">★ 4.8 | 900+ terjual</div>
-                                <div class="text-gray-400 text-xs">Jakarta</div>
-                            </div>
-                        </div>
-                        <div
-                            class="group bg-white rounded-xl shadow-sm border hover:shadow-lift hover:scale-105 transition-all cursor-pointer">
-                            <div class="aspect-square bg-gray-200 flex items-center justify-center">🎮</div>
-                            <div class="p-3">
-                                <div class="font-bold">Gaming Headset</div>
-                                <div class="font-extrabold">Rp250.000</div>
-                                <div class="text-xs text-gray-400">★ 4.9 | 1,8rb terjual</div>
-                                <div class="text-gray-400 text-xs">Surabaya</div>
-                            </div>
-                        </div>
-                        <div
-                            class="group bg-white rounded-xl shadow-sm border hover:shadow-lift hover:scale-105 transition-all cursor-pointer">
-                            <div class="aspect-square bg-gray-200 flex items-center justify-center">⌨️</div>
-                            <div class="p-3">
-                                <div class="font-bold">Mechanical Keyboard</div>
-                                <div class="font-extrabold">Rp450.000</div>
-                                <div class="text-xs text-gray-400">★ 4.7 | 234 terjual</div>
-                                <div class="text-gray-400 text-xs">Bandung</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- tambahan spacer -->
-                <div class="h-8"></div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- footer tipis (opsional) -->
-    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400">
-        © 2025 VEXORA — marketplace modern & terpercaya. Belanja aman & nyaman.
+    <!-- ==================== FULL FOOTER (SAME AS HOMEPAGE) ==================== -->
+    <footer class="bg-gray-900 text-gray-300 mt-12">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
+                <div>
+                    <div class="text-2xl font-bold text-white mb-4">VEXORA</div>
+                    <p class="text-sm text-gray-400 mb-4">Platform jasa terpercaya yang menghubungkan Anda dengan
+                        penyedia layanan profesional.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i
+                                class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i
+                                class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i
+                                class="fab fa-facebook text-xl"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Layanan</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Cari Jasa</a></li>
+                        <li><a href="#" class="hover:text-white transition">Kategori</a></li>
+                        <li><a href="#" class="hover:text-white transition">Promo</a></li>
+                        <li><a href="#" class="hover:text-white transition">Layanan Populer</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Bantuan</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Pusat Bantuan</a></li>
+                        <li><a href="#" class="hover:text-white transition">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="hover:text-white transition">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Penyedia</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Daftar Penyedia</a></li>
+                        <li><a href="#" class="hover:text-white transition">Dashboard</a></li>
+                        <li><a href="#" class="hover:text-white transition">Tips & Panduan</a></li>
+                        <li><a href="#" class="hover:text-white transition">Komisi</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Kontak</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2"><i
+                                class="fas fa-envelope mt-0.5 text-primary"></i><span>hello@vexora.com</span></li>
+                        <li class="flex gap-2"><i class="fas fa-map-marker-alt mt-0.5 text-primary"></i><span>Jakarta,
+                                Indonesia</span></li>
+                        <li class="flex gap-2"><i class="fas fa-phone mt-0.5 text-primary"></i><span>+62 21 1234
+                                5678</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-xs">© 2025 VEXORA — Platform
+                Jasa Terpercaya. Hubungkan kebutuhan Anda dengan penyedia terbaik.</div>
+        </div>
     </footer>
 
-    <!-- drawer sidebar untuk mobile (hidden) tapi sesuai requirement "sidebar jadi drawer (hidden di mobile)" hanya showcase karena tidak ada js interaktif, tapi struktur sudah memenuhi:
-       Pada layar lg:block, <lg akan disembunyikan, dan seharusnya drawer bisa diimplementasikan via JS, namun di poin tidak perlu framework JS; kami tidak menyertakan JS eksternal, hanya structural. Tampilan desktop-first sudah sempurna.
-       User bisa menggunakan toggle class di produksi. Kami sudah patuhi tanpa library tambahan.
-  -->
-    <!-- Catatan: Sidebar desktop & tablet berfungsi, mobile tidak mengganggu. Tambahan "Ready Stock" menunjukkan variasi tanpa sidebar -->
+    <!-- Simple script for filter reset behavior (optional) -->
+    <script>
+        // Just for demo reset buttons - would connect to real filtering logic
+        document.querySelectorAll('.reset-filter-btn, button:contains("Reset Filter")').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input =>
+                    input.checked = false);
+                document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+            });
+        });
+    </script>
 </body>
 
 </html>

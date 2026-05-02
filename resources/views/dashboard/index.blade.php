@@ -3,1063 +3,659 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VEXORA · Modern Marketplace</title>
-    @vite('resources/css/app.css')
-    <!-- Font Awesome 6 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>VEXORA — Platform Jasa Terpercaya</title>
+    <!-- Tailwind CSS CDN + Google Fonts (Inter) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#EFF6FF',
+                        accent: '#FEF9C3',
+                    },
+                    animation: {
+                        'float-slow': 'float 4s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': {
+                                transform: 'translateY(0px)'
+                            },
+                            '50%': {
+                                transform: 'translateY(-12px)'
+                            },
+                        },
+                        fadeIn: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(10px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        html {
-            scroll-behavior: smooth;
+        * {
+            -webkit-font-smoothing: antialiased;
         }
 
-        input[type="search"]::-webkit-search-decoration,
-        input[type="search"]::-webkit-search-cancel-button,
-        input[type="search"]::-webkit-search-results-button,
-        input[type="search"]::-webkit-search-results-decoration {
-            display: none;
+        body {
+            background: #ffffff;
         }
 
-        .line-clamp-1 {
+        .hover-lift {
+            transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-6px);
+        }
+
+        .card-image-zoom {
             overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            line-clamp: 1;
-            -webkit-box-orient: vertical;
         }
 
-        .line-clamp-2 {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
+        .card-image-zoom img {
+            transition: transform 0.6s ease;
         }
 
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Dropdown animation */
-        .dropdown-enter {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        .dropdown-enter-active {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 200ms, transform 200ms;
+        .card-image-zoom:hover img {
+            transform: scale(1.06);
         }
     </style>
 </head>
 
-<body class="bg-gray-50 font-sans antialiased">
+<body class="font-sans text-gray-800 bg-white">
 
-    <div class="w-full min-h-screen">
+    <!-- ==================== STICKY NAVBAR ==================== -->
+    <header
+        class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 transition-all duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="{{ asset('assets/images/logo-copy.jpeg') }}" alt="VEXORA"
+                    class="h-8 md:h-10 w-auto object-contain">
+            </div>
+            <nav class="hidden md:flex items-center space-x-8 text-gray-600 font-medium">
+                <a href="#" class="hover:text-primary transition text-sm">Beranda</a>
+                <a href="#" class="hover:text-primary transition text-sm">Cari Jasa</a>
+                <a href="#" class="hover:text-primary transition text-sm">Penyedia</a>
+                <a href="#" class="hover:text-primary transition text-sm">Tentang</a>
+                <a href="#" class="hover:text-primary transition text-sm">Blog</a>
+                <a href="#" class="hover:text-primary transition text-sm">Kontak</a>
+            </nav>
+            <div class="flex items-center gap-5">
 
-        <!-- ========== 1. HEADER / NAVBAR ========== -->
-        <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
-            <div class="w-full px-4 md:px-8 lg:px-12 py-3 md:py-4">
-                <div class="flex items-center justify-between gap-4 flex-wrap md:flex-nowrap">
-                    <!-- Logo -->
-                    <div class="shrink-0">
-                        <a href="/" class="flex items-center group">
-                            <img src="{{ asset('assets/images/logo-copy.jpeg') }}" alt="Vexora Logo"
-                                class="h-8 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
-                        </a>
+                <!-- Search -->
+                <div class="relative hidden md:block">
+                    <input type="text" placeholder="Cari jasa..."
+                        class="pl-10 pr-4 py-2 rounded-full border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-48">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+
+                <!-- Calendar -->
+                {{-- <i class="fas fa-calendar-alt text-lg text-gray-500 hover:text-primary cursor-pointer transition"></i> --}}
+
+                <!-- Auth -->
+                @guest
+                    <div class="flex items-center gap-2">
+                        <a href="/login" class="text-sm text-gray-600 hover:text-primary">Sign In</a>
+                        <a href="/register" class="text-sm bg-primary text-white px-3 py-1.5 rounded-full">Sign Up</a>
                     </div>
+                @endguest
 
-                    <!-- Search Bar -->
-                    <div class="flex-1 min-w-[160px] max-w-2xl mx-2 md:mx-4">
-                        <div class="relative w-full">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                                <i class="fas fa-search text-gray-400 text-sm"></i>
+                @auth
+                    <div class="relative group">
+
+                        <!-- Trigger -->
+                        <button class="flex items-center gap-2 focus:outline-none">
+
+                            <!-- Avatar -->
+                            <div
+                                class="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold">
+
+                                @php $avatar = Auth::user()->avatar; @endphp
+
+                                @if ($avatar)
+                                    @if (Str::startsWith($avatar, ['http://', 'https://']))
+                                        <img src="{{ $avatar }}" class="w-full h-full object-cover">
+                                    @else
+                                        <img src="{{ asset('storage/' . $avatar) }}" class="w-full h-full object-cover">
+                                    @endif
+                                @else
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                @endif
+
                             </div>
-                            <input type="search" placeholder="Cari produk, brand, atau toko..."
-                                class="w-full bg-gray-100 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 shadow-inner">
-                        </div>
-                    </div>
 
-                    <!-- Right Icons -->
-                    <div class="flex items-center gap-3 sm:gap-5 shrink-0">
-                        <button class="relative text-gray-600 hover:text-blue-600 transition-all duration-300">
-                            <i class="fas fa-shopping-bag text-xl"></i>
-                            <span
-                                class="absolute -top-1.5 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5">3</span>
+                            <!-- Nama -->
+                            <span class="hidden md:block text-sm font-medium text-gray-700">
+                                {{ Auth::user()->name }}
+                            </span>
+
+                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
                         </button>
-                        <button class="text-gray-600 hover:text-blue-600 transition-all duration-300">
-                            <i class="far fa-bell text-xl"></i>
-                        </button>
 
-                        <!-- ========== CONDITIONAL PROFILE SECTION ========== -->
-                        @guest
-                            <!-- Guest Mode: Login & Register Buttons -->
-                            <div class="flex items-center gap-2 ml-2">
-                                <a href="{{ route('login') }}"
-                                    class="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium text-sm px-3 py-1.5 rounded-full">
-                                    Login
-                                </a>
-                                <a href="{{ route('register') }}"
-                                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full text-sm transition-all duration-300 shadow-sm hover:shadow-md">
-                                    Register
-                                </a>
+                        <!-- Dropdown -->
+                        <div
+                            class="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 
+                opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                translate-y-2 group-hover:translate-y-0 
+                transition-all duration-200 z-50">
+
+                            <!-- Header -->
+                            <div class="p-4 border-b">
+                                <p class="font-semibold text-gray-800 text-sm">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                             </div>
-                        @endguest
 
-                        @auth
-                            <!-- Auth Mode: Profile Dropdown -->
-                            <div class="relative">
-                                <button id="profileButton"
-                                    class="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-all duration-300 focus:outline-none group">
-                                    <!-- Avatar -->
-                                    <div
-                                        class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                            <!-- Menu -->
+                            <div class="py-2 text-sm">
 
-                                        @php
-                                            $avatar = Auth::user()->avatar;
-                                        @endphp
+                                <a href="/profile" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-user w-4 text-gray-400"></i>
+                                    Profile
+                                </a>
 
-                                        @if ($avatar)
-                                            @if (\Illuminate\Support\Str::startsWith($avatar, ['http://', 'https://']))
-                                                <img src="{{ $avatar }}" alt="{{ Auth::user()->name }}"
-                                                    class="w-full h-full object-cover">
-                                            @else
-                                                <img src="{{ asset('storage/' . $avatar) }}" alt="{{ Auth::user()->name }}"
-                                                    class="w-full h-full object-cover">
-                                            @endif
-                                        @else
-                                            <span class="text-white text-sm font-bold">
-                                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                            </span>
-                                        @endif
+                                <a href="/dashboard" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-tachometer-alt w-4 text-gray-400"></i>
+                                    Dashboard
+                                </a>
 
-                                    </div>
-                                    <span class="hidden md:inline text-sm font-medium text-gray-700">
-                                        {{ Auth::user()->name }}
-                                    </span>
-                                    <i class="fas fa-chevron-down text-xs transition-transform duration-300"
-                                        id="chevronIcon"></i>
-                                </button>
+                                <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-shopping-bag w-4 text-gray-400"></i>
+                                    Pesanan
+                                </a>
 
-                                <!-- Dropdown Menu -->
-                                <div id="profileDropdown"
-                                    class="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 opacity-0 invisible transition-all duration-300 transform -translate-y-2 z-50">
-                                    <div class="p-4 border-b border-gray-100">
-                                        <div class="flex items-center gap-3">
-                                            <!-- Avatar besar di dropdown -->
-                                            <div
-                                                class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl overflow-hidden">
+                                <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-heart w-4 text-gray-400"></i>
+                                    Wishlist
+                                </a>
 
-                                                @if (Auth::user()->avatar)
+                                <div class="border-t my-2"></div>
 
-                                                    @if (Str::startsWith(Auth::user()->avatar, ['http://', 'https://']))
-                                                        <img src="{{ Auth::user()->avatar }}"
-                                                            alt="{{ Auth::user()->name }}"
-                                                            class="w-full h-full object-cover">
-                                                    @else
-                                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
-                                                            alt="{{ Auth::user()->name }}"
-                                                            class="w-full h-full object-cover">
-                                                    @endif
-                                                @else
-                                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                                @endif
+                                <!-- Logout -->
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button
+                                        class="w-full text-left flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50">
+                                        <i class="fas fa-sign-out-alt w-4"></i>
+                                        Logout
+                                    </button>
+                                </form>
 
-                                            </div>
-                                            <div class="flex-1">
-                                                <h4 class="font-semibold text-gray-800">{{ Auth::user()->name }}</h4>
-                                                <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
-                                                <span
-                                                    class="inline-block mt-1 text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full">
-                                                    Member {{ Auth::user()->role ?? 'Regular' }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="py-2">
-                                        <a href=""
-                                            class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                                            <i class="fas fa-user-circle w-5 text-gray-400"></i>
-                                            <span class="text-sm">Profile Saya</span>
-                                        </a>
-                                        <a href=""
-                                            class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                                            <i class="fas fa-tachometer-alt w-5 text-gray-400"></i>
-                                            <span class="text-sm">Dashboard</span>
-                                        </a>
-                                        <a href=""
-                                            class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                                            <i class="fas fa-shopping-bag w-5 text-gray-400"></i>
-                                            <span class="text-sm">Pesanan Saya</span>
-                                            <span
-                                                class="ml-auto text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">3</span>
-                                        </a>
-                                        <a href=""
-                                            class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                                            <i class="fas fa-heart w-5 text-gray-400"></i>
-                                            <span class="text-sm">Wishlist</span>
-                                        </a>
-                                        <div class="border-t border-gray-100 my-1"></div>
-
-                                        <!-- Logout Form (Laravel Standard) -->
-                                        <form method="POST" action="{{ route('logout') }}" id="logout-form-dropdown">
-                                            @csrf
-                                            <button type="submit"
-                                                class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-all duration-300">
-                                                <i class="fas fa-sign-out-alt w-5"></i>
-                                                <span class="text-sm font-medium">Logout</span>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
                             </div>
-                        @endauth
-
-                        <!-- Toggle Toko/User -->
-                        <div class="hidden sm:flex items-center bg-gray-100 rounded-full p-1 ml-1">
-                            <button
-                                class="px-3 py-1.5 text-xs font-semibold rounded-full bg-white text-blue-600 shadow-sm transition-all duration-300">Toko</button>
-                            <button
-                                class="px-3 py-1.5 text-xs font-semibold rounded-full text-gray-600 hover:bg-gray-200 transition-all duration-300">User</button>
                         </div>
-                        <div class="sm:hidden flex bg-gray-100 rounded-full p-1">
-                            <button
-                                class="px-2 py-1 text-xs font-medium rounded-full bg-white text-blue-600">Toko</button>
-                            <button class="px-2 py-1 text-xs font-medium text-gray-600">User</button>
+                    </div>
+                @endauth
+
+                <!-- Mobile menu -->
+                <button class="block md:hidden text-gray-700">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- ==================== HERO SECTION ==================== -->
+        <section class="py-12 md:py-20 animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 text-center lg:text-left">
+                    <span
+                        class="inline-block text-primary text-sm font-semibold tracking-wide uppercase bg-secondary px-4 py-1.5 rounded-full">Platform
+                        Jasa Terpercaya</span>
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-gray-900 leading-[1.2]">
+                        Temukan Jasa Terbaik<br>untuk Kebutuhan Anda</h1>
+                    <p class="text-gray-500 text-lg max-w-md mx-auto lg:mx-0 leading-relaxed">Dari les privat hingga
+                        layanan profesional, VEXORA menghubungkan Anda dengan penyedia jasa terpercaya dengan mudah dan
+                        cepat.</p>
+                    <div class="pt-2"><a href="#"
+                            class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium px-8 py-4 rounded-full shadow-sm hover:shadow-md transition-all duration-300">Cari
+                            Jasa Sekarang <i class="fas fa-arrow-right text-sm"></i></a></div>
+                </div>
+                <div class="relative flex justify-center lg:justify-end">
+                    <div class="relative w-full max-w-2xl">
+
+                        <div class="absolute inset-0 bg-secondary rounded-full blur-3xl opacity-40 -z-10 scale-90">
+                        </div>
+
+                        <div
+                            class="absolute -inset-4 bg-gradient-to-tr from-secondary/30 to-transparent rounded-full blur-2xl -z-10">
+                        </div>
+
+                        <div class="absolute right-[-80px] top-1/2 -translate-y-1/2">
+                            <div class="animate-float-slow">
+                                <img src="{{ asset('assets/images/vexora-bg.png') }}"
+                                    class="w-[800px] max-w-none object-contain">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </header>
-
-        <!-- ========== 2. HERO BANNER ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-6">
-            <div
-                class="w-full h-48 md:h-56 lg:h-64 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 rounded-2xl shadow-sm flex items-center justify-center relative overflow-hidden border border-gray-200">
-                <div class="text-center px-4">
-                    <i class="fas fa-arrow-circle-right text-gray-400 text-3xl mb-2 block"></i>
-                    <span class="text-gray-500 font-medium text-base md:text-lg">🎯 Gambar Iklan → Geser
-                        kesamping</span>
-                    <p class="text-xs text-gray-400 mt-1">Promo spesial menanti | Swipe untuk lihat lebih banyak</p>
-                </div>
-                <div class="absolute right-4 top-1/2 -translate-y-1/2 hidden md:block animate-pulse">
-                    <i class="fas fa-chevron-circle-right text-gray-300 text-2xl"></i>
-                </div>
-            </div>
         </section>
 
-        <!-- ========== 3. KATEGORI & TENTANG PRODUK ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-10">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div
-                    class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
-                        <i class="fas fa-th-large text-blue-500 text-lg"></i> Kategori Produk
-                    </h3>
-                    <div class="flex flex-wrap gap-3">
-                        <button
-                            class="bg-gray-100 hover:bg-blue-500 hover:text-white transition-all duration-300 text-gray-700 font-medium px-5 py-2 rounded-full text-sm">IT
-                            Services</button>
-                        <button
-                            class="bg-gray-100 hover:bg-blue-500 hover:text-white transition-all duration-300 text-gray-700 font-medium px-5 py-2 rounded-full text-sm">Digital
-                            Products</button>
-                        <button
-                            class="bg-gray-100 hover:bg-blue-500 hover:text-white transition-all duration-300 text-gray-700 font-medium px-5 py-2 rounded-full text-sm">Software
-                            License</button>
-                        <button
-                            class="bg-gray-100 hover:bg-blue-500 hover:text-white transition-all duration-300 text-gray-700 font-medium px-5 py-2 rounded-full text-sm">Cloud
-                            Hosting</button>
-                    </div>
-                </div>
-                <div
-                    class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
-                        <i class="fas fa-info-circle text-blue-500"></i> Tentang Produk
-                    </h3>
-                    <div class="flex flex-wrap gap-4 items-center">
-                        <button
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-xl shadow-md transition-all duration-300 text-sm">✨
-                            Rekomendasi Produk</button>
-                        <button
-                            class="bg-gray-100 border border-gray-300 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-6 rounded-xl transition-all duration-300 text-sm">🔥
-                            Produk Tren</button>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-3">*Berdasarkan aktivitas belanja & preferensi kamu</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========== 4. PROMO BANNER ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-10">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                <div
-                    class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 shadow-sm border border-gray-200 text-center transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-                    <div class="text-3xl mb-2">⚡</div>
-                    <h4 class="font-bold text-gray-800 text-base">DISKON S.D. 90%</h4>
-                    <p class="text-sm text-gray-500 mt-1">Khusus Pengguna VIP</p>
-                    <span
-                        class="inline-block mt-3 bg-white/80 rounded-full px-3 py-1 text-xs font-semibold text-red-600">Limited</span>
-                </div>
-                <div
-                    class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 shadow-sm border border-gray-200 text-center transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-                    <div class="text-3xl mb-2">🎟️</div>
-                    <h4 class="font-bold text-gray-800 text-base">DAPATKAN VOUCHER 150 RIBU</h4>
-                    <p class="text-sm text-gray-500 mt-1">TANPA MIN. BELANJA</p>
-                    <span
-                        class="inline-block mt-3 bg-white/80 rounded-full px-3 py-1 text-xs font-semibold text-blue-700">Ambil
-                        sekarang</span>
-                </div>
-                <div
-                    class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-5 shadow-sm border border-gray-200 text-center transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-                    <div class="text-3xl mb-2">⏰</div>
-                    <h4 class="font-bold text-gray-800 text-base">FLASH SALE SPESIAL HARI INI!!</h4>
-                    <p class="text-sm text-gray-500 mt-1">Terbatas, buruan!</p>
-                    <span
-                        class="inline-block mt-3 bg-white/80 rounded-full px-3 py-1 text-xs font-semibold text-orange-600">00:12:45</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========== 5. TABS ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-12">
-            <div class="flex flex-wrap border-b border-gray-200 gap-2 md:gap-8">
-                <button id="tabForUser"
-                    class="tab-btn py-2.5 px-1 text-base font-semibold transition-all duration-300 border-b-2 border-blue-500 text-blue-600">
-                    For User
-                </button>
-                <button id="tabTren"
-                    class="tab-btn py-2.5 px-1 text-base font-semibold transition-all duration-300 border-b-2 border-transparent text-gray-500 hover:text-blue-500">
-                    Produk Tren
-                </button>
-                <button id="tabPromo"
-                    class="tab-btn py-2.5 px-1 text-base font-semibold transition-all duration-300 border-b-2 border-transparent text-gray-500 hover:text-blue-500">
-                    Promo Hari Ini
-                </button>
-            </div>
-        </section>
-
-        <!-- ========== 6. PRODUCT GRID ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-8 pb-10">
-            <div id="productGridContainer"
-                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 gap-y-8"></div>
-            <div class="text-center mt-10">
-                <button
-                    class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-8 rounded-full shadow-sm text-sm transition-all duration-300 hover:shadow-md">
-                    Lihat Lainnya <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </section>
-
-        <!-- ========== 7. KATEGORI PILIHAN ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-12">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Kategori Pilihan</h2>
-                <a href="#"
-                    class="text-blue-600 hover:text-blue-700 text-sm font-medium transition-all duration-300">Lihat
-                    Semua <i class="fas fa-arrow-right ml-1"></i></a>
+        <!-- ==================== BROWSE BY CATEGORY ==================== -->
+        <section class="py-16 border-t border-gray-100">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-semibold text-gray-900">Jelajahi Kategori Jasa</h2>
+                <p class="text-gray-500 mt-2 text-sm">Temukan layanan yang Anda butuhkan</p>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                <a href="#"
-                    class="group bg-white rounded-2xl p-5 text-center border border-gray-100 shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
+                @php
+                    $serviceCategories = [
+                        ['name' => 'Les Privat', 'icon' => 'fas fa-chalkboard-user', 'bg' => '#EFF6FF'],
+                        ['name' => 'Desain & Kreatif', 'icon' => 'fas fa-pen-ruler', 'bg' => '#F8FAFC'],
+                        ['name' => 'Teknologi & IT', 'icon' => 'fas fa-code', 'bg' => '#F1F5F9'],
+                        ['name' => 'Perbaikan Rumah', 'icon' => 'fas fa-tools', 'bg' => '#F0FDF4'],
+                        ['name' => 'Kesehatan & Fitness', 'icon' => 'fas fa-heartbeat', 'bg' => '#FFF7ED'],
+                        ['name' => 'Jasa Harian', 'icon' => 'fas fa-broom', 'bg' => '#FEF2F2'],
+                    ];
+                @endphp
+                @foreach ($serviceCategories as $cat)
                     <div
-                        class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-all duration-300">
-                        <i class="fas fa-server text-2xl text-blue-500"></i>
+                        class="group flex flex-col items-center p-5 bg-white rounded-2xl border border-gray-100 hover:shadow-lg hover:border-transparent transition-all duration-300 cursor-pointer hover-lift">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-3 transition group-hover:scale-105"
+                            style="background-color: {{ $cat['bg'] }}; color: #3B82F6;">
+                            <i class="{{ $cat['icon'] }}"></i>
+                        </div>
+                        <span class="font-medium text-gray-800 text-sm">{{ $cat['name'] }}</span>
                     </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Hosting</h3>
-                    <p class="text-xs text-gray-400 mt-1">124 produk</p>
-                </a>
-                <a href="#"
-                    class="group bg-white rounded-2xl p-5 text-center border border-gray-100 shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
-                    <div
-                        class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-all duration-300">
-                        <i class="fas fa-paint-brush text-2xl text-blue-500"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Web Design</h3>
-                    <p class="text-xs text-gray-400 mt-1">89 produk</p>
-                </a>
-                <a href="#"
-                    class="group bg-white rounded-2xl p-5 text-center border border-gray-100 shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
-                    <div
-                        class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-all duration-300">
-                        <i class="fas fa-code text-2xl text-blue-500"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Software</h3>
-                    <p class="text-xs text-gray-400 mt-1">256 produk</p>
-                </a>
-                <a href="#"
-                    class="group bg-white rounded-2xl p-5 text-center border border-gray-100 shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
-                    <div
-                        class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-all duration-300">
-                        <i class="fas fa-chart-line text-2xl text-blue-500"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Digital Marketing</h3>
-                    <p class="text-xs text-gray-400 mt-1">67 produk</p>
-                </a>
-                <a href="#"
-                    class="group bg-white rounded-2xl p-5 text-center border border-gray-100 shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
-                    <div
-                        class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-all duration-300">
-                        <i class="fas fa-laptop-code text-2xl text-blue-500"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">IT Services</h3>
-                    <p class="text-xs text-gray-400 mt-1">145 produk</p>
-                </a>
-                <a href="#"
-                    class="group bg-white rounded-2xl p-5 text-center border border-gray-100 shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
-                    <div
-                        class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-all duration-300">
-                        <i class="fas fa-cloud text-2xl text-blue-500"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Cloud Computing</h3>
-                    <p class="text-xs text-gray-400 mt-1">98 produk</p>
-                </a>
+                @endforeach
             </div>
         </section>
 
-        <!-- ========== 8. TOKO TERPERCAYA (SCROLLABLE) ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-12">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Toko Terpercaya</h2>
-                <a href="#"
-                    class="text-blue-600 hover:text-blue-700 text-sm font-medium transition-all duration-300">Lihat
-                    Semua <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
-            <div class="flex overflow-x-auto gap-5 pb-4 scrollbar-hide">
-                <div
-                    class="flex-shrink-0 w-40 bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
-                    <div class="relative">
-                        <div
-                            class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-3">
-                            <i class="fas fa-store text-3xl text-blue-500"></i>
+        <!-- ==================== PROMO BANNER ==================== -->
+        <section class="py-12">
+            <div
+                class="bg-secondary/30 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-10 border border-primary/10 shadow-sm">
+                <div class="flex-1 text-center md:text-left space-y-4">
+                    <h3 class="text-2xl md:text-3xl font-bold text-gray-900">Temukan Jasa Berkualitas<br>dengan Harga
+                        Terjangkau</h3>
+                    <p class="text-gray-600 max-w-sm mx-auto md:mx-0">Dapatkan penawaran terbaik dari penyedia jasa
+                        terpercaya di berbagai bidang.</p>
+                    <div class="flex justify-center md:justify-start gap-3 pt-2">
+                        <div class="bg-white rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px]"><span
+                                class="text-2xl font-bold text-primary" id="days">00</span>
+                            <p class="text-[10px] uppercase tracking-wide text-gray-500">Hari</p>
                         </div>
-                        <i class="fas fa-check-circle text-blue-500 absolute top-0 right-8 bg-white rounded-full"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">VEXORA Official</h3>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <i class="fas fa-star text-yellow-400 text-xs"></i>
-                        <span class="text-xs font-medium">4.9</span>
-                        <span class="text-xs text-gray-400">• 1240 produk</span>
-                    </div>
-                    <span
-                        class="inline-block mt-2 text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Verified</span>
-                </div>
-                <div
-                    class="flex-shrink-0 w-40 bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
-                    <div class="relative">
-                        <div
-                            class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-3">
-                            <i class="fas fa-microchip text-3xl text-blue-500"></i>
+                        <div class="bg-white rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px]"><span
+                                class="text-2xl font-bold text-primary" id="hours">00</span>
+                            <p class="text-[10px] uppercase tracking-wide text-gray-500">Jam</p>
                         </div>
-                        <i class="fas fa-check-circle text-blue-500 absolute top-0 right-8 bg-white rounded-full"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Tech Galaxy</h3>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <i class="fas fa-star text-yellow-400 text-xs"></i>
-                        <span class="text-xs font-medium">4.8</span>
-                        <span class="text-xs text-gray-400">• 890 produk</span>
-                    </div>
-                    <span
-                        class="inline-block mt-2 text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Verified</span>
-                </div>
-                <div
-                    class="flex-shrink-0 w-40 bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
-                    <div class="relative">
-                        <div
-                            class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-3">
-                            <i class="fas fa-globe text-3xl text-blue-500"></i>
+                        <div class="bg-white rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px]"><span
+                                class="text-2xl font-bold text-primary" id="minutes">00</span>
+                            <p class="text-[10px] uppercase tracking-wide text-gray-500">Menit</p>
                         </div>
-                        <i class="fas fa-check-circle text-blue-500 absolute top-0 right-8 bg-white rounded-full"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Digital Haven</h3>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <i class="fas fa-star text-yellow-400 text-xs"></i>
-                        <span class="text-xs font-medium">4.7</span>
-                        <span class="text-xs text-gray-400">• 567 produk</span>
-                    </div>
-                    <span
-                        class="inline-block mt-2 text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Verified</span>
-                </div>
-                <div
-                    class="flex-shrink-0 w-40 bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
-                    <div
-                        class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-headset text-3xl text-blue-500"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">Gear Pro</h3>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <i class="fas fa-star text-yellow-400 text-xs"></i>
-                        <span class="text-xs font-medium">4.8</span>
-                        <span class="text-xs text-gray-400">• 432 produk</span>
-                    </div>
-                </div>
-                <div
-                    class="flex-shrink-0 w-40 bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
-                    <div class="relative">
-                        <div
-                            class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-3">
-                            <i class="fas fa-terminal text-3xl text-blue-500"></i>
+                        <div class="bg-white rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px]"><span
+                                class="text-2xl font-bold text-primary" id="seconds">00</span>
+                            <p class="text-[10px] uppercase tracking-wide text-gray-500">Detik</p>
                         </div>
-                        <i class="fas fa-check-circle text-blue-500 absolute top-0 right-8 bg-white rounded-full"></i>
                     </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">CodeSpace</h3>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <i class="fas fa-star text-yellow-400 text-xs"></i>
-                        <span class="text-xs font-medium">4.9</span>
-                        <span class="text-xs text-gray-400">• 321 produk</span>
-                    </div>
-                    <span
-                        class="inline-block mt-2 text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Verified</span>
+                    <a href="#"
+                        class="inline-block bg-primary text-white px-7 py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition shadow-sm mt-2">Lihat
+                        Semua Jasa →</a>
                 </div>
-                <div
-                    class="flex-shrink-0 w-40 bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
-                    <div
-                        class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-rocket text-3xl text-blue-500"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">InnoTech</h3>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <i class="fas fa-star text-yellow-400 text-xs"></i>
-                        <span class="text-xs font-medium">4.6</span>
-                        <span class="text-xs text-gray-400">• 278 produk</span>
-                    </div>
+                <div class="flex-1 flex justify-center md:justify-end"><img
+                        src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop"
+                        alt="Penyedia jasa"
+                        class="w-56 md:w-64 object-contain drop-shadow-md rounded-2xl hover:scale-105 transition duration-500">
                 </div>
             </div>
         </section>
 
-        <!-- ========== 9. REKOMENDASI UNTUK KAMU ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-12">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Rekomendasi Untuk Kamu</h2>
+        <!-- ==================== SERVICE LISTING (Layanan Populer) ==================== -->
+        <section class="py-16">
+            <div class="flex items-end justify-between flex-wrap mb-10">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900">Layanan Populer</h2>
+                    <p class="text-gray-500 text-sm mt-1">Pilihan terbaik dari para penyedia jasa</p>
+                </div>
                 <a href="#"
-                    class="text-blue-600 hover:text-blue-700 text-sm font-medium transition-all duration-300">Lihat
-                    Semua <i class="fas fa-arrow-right ml-1"></i></a>
+                    class="text-primary text-sm font-medium border-b border-primary/30 hover:border-primary transition">Lihat
+                    semua <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-                <div
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:scale-[1.02]">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                @php
+                    $services = [
+                        [
+                            'title' => 'Les Matematika SMA',
+                            'provider' => 'Bunda Sari',
+                            'rating' => 5,
+                            'price' => 50000,
+                            'location' => 'Jakarta Selatan',
+                            'img' =>
+                                'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=400&fit=crop',
+                        ],
+                        [
+                            'title' => 'Desain Logo Profesional',
+                            'provider' => 'Design Studio ID',
+                            'rating' => 5,
+                            'price' => 250000,
+                            'location' => 'Online',
+                            'img' =>
+                                'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop',
+                        ],
+                        [
+                            'title' => 'Perbaikan AC & Kulkas',
+                            'provider' => 'Technician Plus',
+                            'rating' => 4,
+                            'price' => 150000,
+                            'location' => 'Jabodetabek',
+                            'img' =>
+                                'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=400&fit=crop',
+                        ],
+                        [
+                            'title' => 'Les Bahasa Inggris',
+                            'provider' => 'English Buddy',
+                            'rating' => 5,
+                            'price' => 75000,
+                            'location' => 'Jakarta Utara',
+                            'img' => 'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop',
+                        ],
+                    ];
+                @endphp
+                @foreach ($services as $service)
                     <div
-                        class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <i
-                            class="fas fa-headphones text-gray-400 text-3xl group-hover:scale-110 transition-all duration-300"></i>
-                    </div>
-                    <div class="p-4">
-                        <h4 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-1">VEXORA Premium TWS</h4>
-                        <p class="text-xs text-gray-500 mb-2 line-clamp-1">VEXORA Official</p>
-                        <div class="mb-2">
-                            <span class="font-bold text-gray-800 text-base">Rp 459.000</span>
+                        class="group bg-white rounded-2xl hover:shadow-xl transition-all duration-300 hover-lift border border-gray-100/80">
+                        <div class="card-image-zoom p-4 pb-0"><img src="{{ $service['img'] }}"
+                                alt="{{ $service['title'] }}" class="w-full aspect-square object-cover rounded-xl">
                         </div>
-                        <div class="flex items-center gap-1 text-xs text-gray-500">
-                            <i class="fas fa-star text-yellow-400 text-[10px]"></i>
-                            <span>4.8</span>
-                            <span class="mx-1">•</span>
-                            <span>3.420 terjual</span>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:scale-[1.02]">
-                    <div
-                        class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <i
-                            class="fas fa-mouse text-gray-400 text-3xl group-hover:scale-110 transition-all duration-300"></i>
-                    </div>
-                    <div class="p-4">
-                        <h4 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-1">Gaming Mouse Pro</h4>
-                        <p class="text-xs text-gray-500 mb-2 line-clamp-1">Tech Galaxy</p>
-                        <div class="mb-2">
-                            <span class="font-bold text-gray-800 text-base">Rp 289.000</span>
-                        </div>
-                        <div class="flex items-center gap-1 text-xs text-gray-500">
-                            <i class="fas fa-star text-yellow-400 text-[10px]"></i>
-                            <span>4.7</span>
-                            <span class="mx-1">•</span>
-                            <span>2.156 terjual</span>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:scale-[1.02]">
-                    <div
-                        class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <i
-                            class="fas fa-keyboard text-gray-400 text-3xl group-hover:scale-110 transition-all duration-300"></i>
-                    </div>
-                    <div class="p-4">
-                        <h4 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-1">Mechanical Keyboard</h4>
-                        <p class="text-xs text-gray-500 mb-2 line-clamp-1">Gear Pro</p>
-                        <div class="mb-2">
-                            <span class="font-bold text-gray-800 text-base">Rp 599.000</span>
-                        </div>
-                        <div class="flex items-center gap-1 text-xs text-gray-500">
-                            <i class="fas fa-star text-yellow-400 text-[10px]"></i>
-                            <span>4.9</span>
-                            <span class="mx-1">•</span>
-                            <span>1.876 terjual</span>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:scale-[1.02]">
-                    <div
-                        class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <i
-                            class="fas fa-hdd text-gray-400 text-3xl group-hover:scale-110 transition-all duration-300"></i>
-                    </div>
-                    <div class="p-4">
-                        <h4 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-1">External SSD 1TB</h4>
-                        <p class="text-xs text-gray-500 mb-2 line-clamp-1">VEXORA Official</p>
-                        <div class="mb-2">
-                            <span class="font-bold text-gray-800 text-base">Rp 1.250.000</span>
-                        </div>
-                        <div class="flex items-center gap-1 text-xs text-gray-500">
-                            <i class="fas fa-star text-yellow-400 text-[10px]"></i>
-                            <span>4.8</span>
-                            <span class="mx-1">•</span>
-                            <span>987 terjual</span>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:scale-[1.02]">
-                    <div
-                        class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <i
-                            class="fas fa-charging-station text-gray-400 text-3xl group-hover:scale-110 transition-all duration-300"></i>
-                    </div>
-                    <div class="p-4">
-                        <h4 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-1">Wireless Charger</h4>
-                        <p class="text-xs text-gray-500 mb-2 line-clamp-1">CodeSpace</p>
-                        <div class="mb-2">
-                            <span class="font-bold text-gray-800 text-base">Rp 189.000</span>
-                        </div>
-                        <div class="flex items-center gap-1 text-xs text-gray-500">
-                            <i class="fas fa-star text-yellow-400 text-[10px]"></i>
-                            <span>4.5</span>
-                            <span class="mx-1">•</span>
-                            <span>5.432 terjual</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========== 10. KENAPA PILIH VEXORA ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-12">
-            <div class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-                <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Kenapa Pilih Vexora?</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="text-center group hover:scale-105 transition-all duration-300">
-                        <div
-                            class="w-16 h-16 mx-auto bg-blue-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-all duration-300">
-                            <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
-                        </div>
-                        <h3 class="font-semibold text-gray-800 mb-2">Pembayaran Aman</h3>
-                        <p class="text-sm text-gray-500">Sistem keamanan terenkripsi & perlindungan data</p>
-                    </div>
-                    <div class="text-center group hover:scale-105 transition-all duration-300">
-                        <div
-                            class="w-16 h-16 mx-auto bg-blue-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-all duration-300">
-                            <i class="fas fa-box-check text-2xl text-blue-600"></i>
-                        </div>
-                        <h3 class="font-semibold text-gray-800 mb-2">Produk Berkualitas</h3>
-                        <p class="text-sm text-gray-500">100% original & garansi resmi</p>
-                    </div>
-                    <div class="text-center group hover:scale-105 transition-all duration-300">
-                        <div
-                            class="w-16 h-16 mx-auto bg-blue-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-all duration-300">
-                            <i class="fas fa-headset text-2xl text-blue-600"></i>
-                        </div>
-                        <h3 class="font-semibold text-gray-800 mb-2">Dukungan 24/7</h3>
-                        <p class="text-sm text-gray-500">Layanan pelanggan siap membantu kapan saja</p>
-                    </div>
-                    <div class="text-center group hover:scale-105 transition-all duration-300">
-                        <div
-                            class="w-16 h-16 mx-auto bg-blue-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-all duration-300">
-                            <i class="fas fa-truck-fast text-2xl text-blue-600"></i>
-                        </div>
-                        <h3 class="font-semibold text-gray-800 mb-2">Pengiriman Cepat</h3>
-                        <p class="text-sm text-gray-500">Gratis ongkir & tracking realtime</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========== 11. NEWSLETTER CTA ========== -->
-        <section class="w-full px-4 md:px-8 lg:px-12 mt-12">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 md:p-12 text-center shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">Dapatkan promo terbaru dari Vexora</h2>
-                <p class="text-blue-100 mb-6">Berlangganan newsletter dan dapatkan voucher diskon eksklusif!</p>
-                <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-                    onsubmit="event.preventDefault(); alert('Terima kasih telah berlangganan!');">
-                    <input type="email" placeholder="Masukkan email Anda"
-                        class="flex-1 px-4 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300">
-                    <button type="submit"
-                        class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-blue-50 transition-all duration-300 shadow-md hover:shadow-lg">
-                        Subscribe <i class="fas fa-paper-plane ml-2"></i>
-                    </button>
-                </form>
-                <p class="text-blue-100 text-xs mt-4">*Dapatkan diskon 10% untuk pembelian pertama</p>
-            </div>
-        </section>
-
-        <!-- ========== 12. FOOTER ========== -->
-        <footer class="w-full bg-white border-t border-gray-200 mt-12">
-            <div class="px-4 md:px-8 lg:px-12 py-12">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div>
-                        <h3 class="text-xl font-bold text-blue-600 mb-4">VEXORA</h3>
-                        <p class="text-sm text-gray-500 mb-4 leading-relaxed">Marketplace digital terpercaya untuk
-                            kebutuhan IT dan produk digital Anda.</p>
-                        <div class="flex gap-3">
-                            <a href="#"
-                                class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-300 group">
-                                <i class="fab fa-facebook-f text-sm text-gray-500 group-hover:text-white"></i>
-                            </a>
-                            <a href="#"
-                                class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-300 group">
-                                <i class="fab fa-twitter text-sm text-gray-500 group-hover:text-white"></i>
-                            </a>
-                            <a href="#"
-                                class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-300 group">
-                                <i class="fab fa-instagram text-sm text-gray-500 group-hover:text-white"></i>
-                            </a>
-                            <a href="#"
-                                class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-300 group">
-                                <i class="fab fa-youtube text-sm text-gray-500 group-hover:text-white"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-4">Beli</h3>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Rekomendasi
-                                    Untukmu</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Promo Hari
-                                    Ini</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Produk
-                                    Tren</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Voucher &
-                                    Diskon</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-4">Bantuan</h3>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Bantuan dan
-                                    Panduan</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Ruang Edukasi
-                                    Vexora</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Hak Kekayaan
-                                    Intelektual</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Kebijakan
-                                    Privasi</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-4">Layanan</h3>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Vexora
-                                    Profile</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Digital
-                                    Products</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">IT
-                                    Services</a></li>
-                            <li><a href="#"
-                                    class="text-gray-500 hover:text-blue-600 transition-all duration-300">Forum
-                                    Komunitas</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="border-t border-gray-200 mt-8 pt-6 text-center text-sm text-gray-400">
-                    <p>&copy; {{ date('Y') }} VEXORA. All rights reserved. Marketplace digital terpercaya di
-                        Indonesia.</p>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <script>
-        // Dropdown functionality for Auth Mode Only
-        @auth
-        const profileButton = document.getElementById('profileButton');
-        const profileDropdown = document.getElementById('profileDropdown');
-        const chevronIcon = document.getElementById('chevronIcon');
-        let isDropdownOpen = false;
-
-        if (profileButton) {
-            function toggleDropdown() {
-                isDropdownOpen = !isDropdownOpen;
-                if (isDropdownOpen) {
-                    profileDropdown.classList.remove('opacity-0', 'invisible', '-translate-y-2');
-                    profileDropdown.classList.add('opacity-100', 'visible', 'translate-y-0');
-                    if (chevronIcon) chevronIcon.style.transform = 'rotate(180deg)';
-                } else {
-                    profileDropdown.classList.add('opacity-0', 'invisible', '-translate-y-2');
-                    profileDropdown.classList.remove('opacity-100', 'visible', 'translate-y-0');
-                    if (chevronIcon) chevronIcon.style.transform = 'rotate(0deg)';
-                }
-            }
-
-            profileButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleDropdown();
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!profileButton?.contains(e.target) && !profileDropdown?.contains(e.target)) {
-                    if (isDropdownOpen) {
-                        toggleDropdown();
-                    }
-                }
-            });
-        }
-        @endauth
-
-        // Data produk
-        const forUserProducts = [{
-                name: "MacBook Pro 14\" M3",
-                price: 22999000,
-                rating: 4.8,
-                sold: 1243,
-                badge: null
-            },
-            {
-                name: "VEXORA Wireless Mouse",
-                price: 125000,
-                rating: 4.5,
-                sold: 892,
-                badge: null
-            },
-            {
-                name: "Mechanical Keyboard RGB",
-                price: 589000,
-                rating: 4.7,
-                sold: 543,
-                badge: null
-            },
-            {
-                name: "USB-C Hub 8-in-1",
-                price: 299000,
-                rating: 4.6,
-                sold: 2100,
-                badge: null
-            },
-            {
-                name: "Monitor 27\" 4K",
-                price: 3899000,
-                rating: 4.9,
-                sold: 421,
-                badge: null
-            },
-            {
-                name: "SSD External 1TB",
-                price: 1250000,
-                rating: 4.7,
-                sold: 675,
-                badge: null
-            },
-            {
-                name: "Webcam Full HD",
-                price: 450000,
-                rating: 4.3,
-                sold: 352,
-                badge: null
-            },
-            {
-                name: "VEXORA Smartwatch",
-                price: 789000,
-                rating: 4.4,
-                sold: 1520,
-                badge: null
-            },
-            {
-                name: "Laptop Stand Aluminium",
-                price: 199000,
-                rating: 4.8,
-                sold: 3400,
-                badge: null
-            },
-            {
-                name: "Power Bank 20000mAh",
-                price: 325000,
-                rating: 4.6,
-                sold: 2780,
-                badge: null
-            }
-        ];
-
-        const trenProducts = [{
-                name: "iPhone 15 Pro Max",
-                price: 18999000,
-                rating: 4.9,
-                sold: 3421,
-                badge: "🔥 Hot"
-            },
-            {
-                name: "VEXORA TWS Earbuds",
-                price: 459000,
-                rating: 4.8,
-                sold: 5680,
-                badge: "🎧 Trending"
-            },
-            {
-                name: "Smart Home Camera",
-                price: 599000,
-                rating: 4.5,
-                sold: 1734,
-                badge: null
-            },
-            {
-                name: "Drone Mini 4K",
-                price: 2450000,
-                rating: 4.7,
-                sold: 890,
-                badge: "✨ New"
-            },
-            {
-                name: "VEXORA Backpack",
-                price: 379000,
-                rating: 4.8,
-                sold: 2230,
-                badge: null
-            },
-            {
-                name: "GPU RTX 4060",
-                price: 4999000,
-                rating: 4.9,
-                sold: 450,
-                badge: "Gaming"
-            }
-        ];
-
-        const promoProducts = [{
-                name: "VEXORA Hoodie Exclusive",
-                price: 99000,
-                originalPrice: 299000,
-                rating: 4.6,
-                sold: 1245,
-                badge: "Diskon 67%"
-            },
-            {
-                name: "Smart Band 7",
-                price: 199000,
-                originalPrice: 499000,
-                rating: 4.5,
-                sold: 2780,
-                badge: "60% OFF"
-            },
-            {
-                name: "Wireless Charger Pad",
-                price: 89000,
-                originalPrice: 199000,
-                rating: 4.4,
-                sold: 3450,
-                badge: "Flash Sale"
-            },
-            {
-                name: "VEXORA Mousepad XL",
-                price: 45000,
-                originalPrice: 99000,
-                rating: 4.7,
-                sold: 5412,
-                badge: "Hari Ini"
-            }
-        ];
-
-        function renderProducts(products, isPromo = false) {
-            const container = document.getElementById('productGridContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            products.forEach(prod => {
-                const formattedPrice = new Intl.NumberFormat('id-ID').format(prod.price);
-                const ratingStar = prod.rating || 4.5;
-                const soldCount = prod.sold || 0;
-                const badgeHtml = prod.badge ?
-                    `<span class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">${prod.badge}</span>` :
-                    '';
-
-                let priceExtraHtml = '';
-                if (isPromo && prod.originalPrice) {
-                    const formattedOriginal = new Intl.NumberFormat('id-ID').format(prod.originalPrice);
-                    priceExtraHtml =
-                        `<span class="text-xs text-gray-400 line-through ml-2">Rp ${formattedOriginal}</span>`;
-                }
-
-                const card = document.createElement('div');
-                card.className =
-                    'group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:scale-[1.02]';
-                card.innerHTML = `
-                    <div class="relative">
-                        ${badgeHtml}
-                        <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                            <i class="fas fa-box-open text-gray-400 text-3xl group-hover:scale-110 transition-all duration-300"></i>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h4 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-1">${prod.name}</h4>
-                        <div class="flex items-baseline flex-wrap gap-1 mb-2">
-                            <span class="font-bold text-gray-800 text-base">Rp ${formattedPrice}</span>
-                            ${priceExtraHtml}
-                        </div>
-                        <div class="flex items-center gap-1 text-xs text-gray-500">
-                            <div class="flex items-center text-yellow-400">
-                                <i class="fas fa-star text-[10px]"></i>
-                                <span class="ml-1 text-gray-600">${ratingStar}</span>
+                        <div class="p-5 pt-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 text-lg">{{ $service['title'] }}</h3>
+                                    <p class="text-gray-500 text-sm mt-0.5">{{ $service['provider'] }}</p>
+                                </div>
+                                <span
+                                    class="bg-accent text-gray-800 text-[11px] font-bold px-2 py-1 rounded-full">Terpercaya</span>
                             </div>
-                            <span class="mx-1">•</span>
-                            <span><i class="fas fa-shopping-bag mr-1 text-gray-400"></i>${soldCount} terjual</span>
+                            <div class="flex items-center gap-1 mt-2">
+                                @for ($i = 0; $i < 5; $i++)
+                                    @if ($i < $service['rating'])
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    @else
+                                        <i class="far fa-star text-gray-300 text-xs"></i>
+                                    @endif
+                                @endfor
+                                <span class="text-xs text-gray-400 ml-1">({{ $service['rating'] }})</span>
+                            </div>
+                            <div class="mt-3 flex items-baseline justify-between">
+                                <div><span
+                                        class="text-xl font-bold text-primary">Rp{{ number_format($service['price'], 0, ',', '.') }}</span><span
+                                        class="text-xs text-gray-400 ml-1">/ sesi</span></div>
+                                <div class="flex items-center text-xs text-gray-400"><i
+                                        class="fas fa-map-marker-alt mr-1 text-primary/70"></i>{{ $service['location'] }}
+                                </div>
+                            </div>
+                            <a href="#"
+                                class="mt-4 block text-center text-primary text-sm font-medium border border-primary/30 rounded-full py-2 hover:bg-primary hover:text-white transition-all duration-200">Pesan
+                                Layanan</a>
                         </div>
                     </div>
-                `;
-                container.appendChild(card);
-            });
+                @endforeach
+            </div>
+            <div class="flex justify-center mt-14"><a href="#"
+                    class="px-8 py-3 rounded-full border border-gray-300 text-gray-700 text-sm font-medium hover:border-primary hover:text-primary transition-all hover:shadow-sm">Cari
+                    Jasa Lainnya</a></div>
+        </section>
+
+        <!-- ==================== SECTION 1: TESTIMONIALS ==================== -->
+        <section class="py-16 bg-gray-50/50 rounded-3xl my-8">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-semibold text-gray-900">Apa Kata Pengguna</h2>
+                <p class="text-gray-500 mt-2 text-sm">Dipercaya ribuan pengguna setiap hari</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 lg:px-8">
+                @php
+                    $testimonials = [
+                        [
+                            'name' => 'Anita Wijaya',
+                            'feedback' =>
+                                'VEXORA sangat membantu saya menemukan guru les dengan cepat dan terpercaya. Anak saya sekarang lebih paham matematika!',
+                            'rating' => 5,
+                            'avatar' => 'https://randomuser.me/api/portraits/women/44.jpg',
+                        ],
+                        [
+                            'name' => 'Budi Santoso',
+                            'feedback' =>
+                                'Saya cari tukang perbaikan AC di sini, dalam 1 jam langsung datang. Pelayanan cepat dan profesional.',
+                            'rating' => 5,
+                            'avatar' => 'https://randomuser.me/api/portraits/men/32.jpg',
+                        ],
+                        [
+                            'name' => 'Citra Lestari',
+                            'feedback' =>
+                                'Desain logo saya dikerjakan dengan sangat baik. Penyedia jasa responsif dan hasilnya memuaskan.',
+                            'rating' => 4,
+                            'avatar' => 'https://randomuser.me/api/portraits/women/68.jpg',
+                        ],
+                    ];
+                @endphp
+                @foreach ($testimonials as $t)
+                    <div
+                        class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100">
+                        <div class="flex items-center gap-4 mb-4">
+                            <img src="{{ $t['avatar'] }}"
+                                class="w-12 h-12 rounded-full object-cover border-2 border-primary/20">
+                            <div>
+                                <h4 class="font-bold text-gray-800">{{ $t['name'] }}</h4>
+                                <div class="flex items-center gap-1 mt-1">
+                                    @for ($i = 0; $i < 5; $i++)
+                                        @if ($i < $t['rating'])
+                                            <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        @else
+                                            <i class="far fa-star text-gray-300 text-xs"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed">"{{ $t['feedback'] }}"</p>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 2: HOW IT WORKS ==================== -->
+        <section class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-semibold text-gray-900">Cara Kerja VEXORA</h2>
+                <p class="text-gray-500 mt-2 text-sm">Mudah, cepat, dan terpercaya</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                @php
+                    $steps = [
+                        [
+                            'icon' => 'fas fa-search',
+                            'title' => 'Cari Jasa',
+                            'desc' => 'Temukan layanan yang Anda butuhkan dari berbagai kategori',
+                            'number' => '01',
+                        ],
+                        [
+                            'icon' => 'fas fa-handshake',
+                            'title' => 'Pilih Penyedia',
+                            'desc' => 'Lihat profil, rating, dan pilih penyedia terbaik',
+                            'number' => '02',
+                        ],
+                        [
+                            'icon' => 'fas fa-check-circle',
+                            'title' => 'Pesan & Selesai',
+                            'desc' => 'Lakukan pemesanan dan nikmati layanan berkualitas',
+                            'number' => '03',
+                        ],
+                    ];
+                @endphp
+                @foreach ($steps as $step)
+                    <div class="text-center group">
+                        <div class="relative inline-block mb-6">
+                            <div
+                                class="w-24 h-24 bg-secondary rounded-2xl flex items-center justify-center mx-auto group-hover:bg-primary/10 transition-colors duration-300">
+                                <i class="{{ $step['icon'] }} text-3xl text-primary"></i>
+                            </div>
+                            <span
+                                class="absolute -top-3 -right-3 bg-white text-primary font-bold text-sm w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center">{{ $step['number'] }}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $step['title'] }}</h3>
+                        <p class="text-gray-500 max-w-xs mx-auto">{{ $step['desc'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 3: TRUST STATS ==================== -->
+        <section class="py-16 bg-primary/5 rounded-3xl my-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                @php
+                    $stats = [
+                        ['value' => '10.000+', 'label' => 'Penyedia Jasa', 'icon' => 'fas fa-users'],
+                        ['value' => '50.000+', 'label' => 'Pengguna Aktif', 'icon' => 'fas fa-user-check'],
+                        ['value' => '100.000+', 'label' => 'Transaksi Berhasil', 'icon' => 'fas fa-chart-line'],
+                        ['value' => '4.9/5', 'label' => 'Rating Pengguna', 'icon' => 'fas fa-star'],
+                    ];
+                @endphp
+                @foreach ($stats as $stat)
+                    <div class="p-6">
+                        <div
+                            class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                            <i class="{{ $stat['icon'] }} text-primary text-xl"></i>
+                        </div>
+                        <div class="text-3xl md:text-4xl font-extrabold text-gray-900">{{ $stat['value'] }}</div>
+                        <div class="text-gray-500 text-sm mt-1">{{ $stat['label'] }}</div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 4: CALL TO ACTION ==================== -->
+        <section class="py-16">
+            <div class="bg-primary rounded-3xl p-12 md:p-16 text-center text-white shadow-xl">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Siap Menemukan Jasa Terbaik?</h2>
+                <p class="text-blue-100 text-lg max-w-xl mx-auto mb-8">Mulai sekarang dan temukan layanan terpercaya
+                    hanya di VEXORA.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#"
+                        class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-md">Cari
+                        Jasa</a>
+                    <a href="#"
+                        class="inline-block bg-primary/20 border border-white/40 text-white font-semibold px-8 py-3 rounded-full hover:bg-white/10 transition">Jadi
+                        Penyedia</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== SECTION 5: FULL FOOTER ==================== -->
+    <footer class="bg-gray-900 text-gray-300 mt-12">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
+                <div>
+                    <div class="text-2xl font-bold text-white mb-4">VEXORA</div>
+                    <p class="text-sm text-gray-400 mb-4">Platform jasa terpercaya yang menghubungkan Anda dengan
+                        penyedia layanan profesional.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i
+                                class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i
+                                class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i
+                                class="fab fa-facebook text-xl"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Layanan</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Cari Jasa</a></li>
+                        <li><a href="#" class="hover:text-white transition">Kategori</a></li>
+                        <li><a href="#" class="hover:text-white transition">Promo</a></li>
+                        <li><a href="#" class="hover:text-white transition">Layanan Populer</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Bantuan</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Pusat Bantuan</a></li>
+                        <li><a href="#" class="hover:text-white transition">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="hover:text-white transition">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Penyedia</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Daftar Penyedia</a></li>
+                        <li><a href="#" class="hover:text-white transition">Dashboard</a></li>
+                        <li><a href="#" class="hover:text-white transition">Tips & Panduan</a></li>
+                        <li><a href="#" class="hover:text-white transition">Komisi</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Kontak</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2"><i
+                                class="fas fa-envelope mt-0.5 text-primary"></i><span>hello@vexora.com</span></li>
+                        <li class="flex gap-2"><i class="fas fa-map-marker-alt mt-0.5 text-primary"></i><span>Jakarta,
+                                Indonesia</span></li>
+                        <li class="flex gap-2"><i class="fas fa-phone mt-0.5 text-primary"></i><span>+62 21 1234
+                                5678</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-xs">© 2025 VEXORA — Platform
+                Jasa Terpercaya. Hubungkan kebutuhan Anda dengan penyedia terbaik.</div>
+        </div>
+    </footer>
+
+    <!-- Countdown Timer Script -->
+    <script>
+        function getEndDate() {
+            let date = new Date();
+            date.setDate(date.getDate() + 3);
+            date.setHours(23, 59, 59, 999);
+            return date;
         }
+        let timerDate = getEndDate();
 
-        function updateTab(activeTabId) {
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            tabBtns.forEach(btn => {
-                btn.classList.remove('border-blue-500', 'text-blue-600');
-                btn.classList.add('border-transparent', 'text-gray-500');
-            });
-            const activeBtn = document.getElementById(activeTabId);
-            if (activeBtn) {
-                activeBtn.classList.remove('border-transparent', 'text-gray-500');
-                activeBtn.classList.add('border-blue-500', 'text-blue-600');
+        function updateTimer() {
+            const now = new Date().getTime();
+            const diff = timerDate - now;
+            if (diff <= 0) {
+                timerDate = getEndDate();
+                updateTimer();
+                return;
             }
-
-            if (activeTabId === 'tabForUser') {
-                renderProducts(forUserProducts, false);
-            } else if (activeTabId === 'tabTren') {
-                renderProducts(trenProducts, false);
-            } else if (activeTabId === 'tabPromo') {
-                renderProducts(promoProducts, true);
-            }
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (86400000)) / (3600000));
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+            document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+            document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
         }
-
-        document.getElementById('tabForUser')?.addEventListener('click', () => updateTab('tabForUser'));
-        document.getElementById('tabTren')?.addEventListener('click', () => updateTab('tabTren'));
-        document.getElementById('tabPromo')?.addEventListener('click', () => updateTab('tabPromo'));
-        updateTab('tabForUser');
+        updateTimer();
+        setInterval(updateTimer, 1000);
     </script>
 </body>
 
