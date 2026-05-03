@@ -213,7 +213,7 @@
 
         <!-- LOGO VEXORA DI ATAS FORM (DI LUAR CARD) -->
         <div class="vexora-logo-top">
-            <img src="{{ asset('assets/images/logo.jpeg') }}" alt="Vexora Logo">
+            <img src="{{ asset('assets/images/logo-remove.png') }}" alt="Vexora Logo">
         </div>
 
         <div class="form-wrapper">

@@ -8,6 +8,6 @@ use Illuminate\Http\Request;
 class CatalogController extends Controller
 {
     public function index() {
-        return view("katalog.index");
+        return view("pages.catalog");
     }
 }
