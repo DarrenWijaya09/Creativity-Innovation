@@ -29,7 +29,7 @@ class GoogleAuthController extends Controller
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),
-                    'provider' => 'google',
+                    'auth_provider' => 'google',
                     'avatar' => $googleUser->getAvatar(),
                     'password' => bcrypt(Str::random(24)),
                     'role' => 2

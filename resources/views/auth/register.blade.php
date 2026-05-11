@@ -312,7 +312,7 @@
                         Syarat & Ketentuan
                     </a>
                     serta
-                    <a href="#"
+                    <a href="{{ route('syarat-ketentuan') }}"
                         class="text-blue-600 hover:underline hover:text-blue-800 transition-colors duration-200">
                         Kebijakan Privasi
                     </a>

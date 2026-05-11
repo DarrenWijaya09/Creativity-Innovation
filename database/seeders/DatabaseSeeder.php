@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Provider;
+use App\Models\Service;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +17,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // FORUM CATEGORIES
+        $this->call([
+            ForumCategorySeeder::class,
         ]);
+
+        // USER BIASA
+        User::factory(50)->create();
+
+        // SELLER
+        User::factory(20)
+            ->create([
+                'role' => 1,
+            ])
+            ->each(function ($user) {
+
+                $provider = Provider::factory()->create([
+                    'user_id' => $user->id,
+                ]);
+
+                Service::factory(
+                    rand(3, 8)
+                )->create([
+                            'provider_id' => $provider->id,
+                        ]);
+
+            });
     }
 }
