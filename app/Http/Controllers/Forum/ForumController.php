@@ -138,10 +138,72 @@ class ForumController extends Controller
             ->take(4)
             ->get();
 
+        $categories = ForumCategory::query()
+            ->latest()
+            ->get();
+
         return view('pages.forum.show', compact(
             'thread',
             'replies',
             'relatedThreads',
+            'categories',
         ));
+    }
+
+
+    public function update(Request $request, $slug)
+    {
+        $thread = ForumThread::query()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        abort_if(
+            $thread->user_id !== Auth::id(),
+            403
+        );
+
+        $validated = $request->validate([
+            'title' => ['required', 'max:255'],
+            'category_id' => [
+                'required',
+                'exists:forum_categories,id',
+            ],
+            'content' => [
+                'required',
+                'min:20',
+            ],
+        ]);
+
+        $thread->update([
+            'title' => $validated['title'],
+            'category_id' => $validated['category_id'],
+            'content' => $validated['content'],
+        ]);
+
+        return redirect()
+            ->route('forum.show', $thread->slug)
+            ->with(
+                'success',
+                'Diskusi berhasil diperbarui.'
+            );
+    }
+
+    public function destroy($slug)
+    {
+        $thread = ForumThread::query()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        abort_if(
+            $thread->user_id !== Auth::id(),
+            403
+        );
+
+        $thread->delete();
+
+        return response()->json([
+            'success' => true,
+            'redirect' => route('forum.index'),
+        ]);
     }
 }

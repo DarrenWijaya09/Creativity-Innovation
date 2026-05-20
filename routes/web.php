@@ -13,6 +13,10 @@ use App\Http\Controllers\Seller\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Models\Service;
 use App\Http\Controllers\Forum\ForumReplyController;
+use App\Http\Controllers\Contact\ContactController;
+use App\Http\Controllers\Cart\CartController;
+use App\Http\Controllers\Chat\ConversationController;
+use App\Http\Controllers\Chat\MessageController;
 
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -66,7 +70,8 @@ Route::get('/ruang-edukasi', function () {
 })->name('ruang-edukasi');
 
 // Catalog
-Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+Route::get('/catalog', [CatalogController::class, 'index'])
+    ->name('catalog.index');
 Route::get('/catalog/{slug}', [CatalogController::class, 'show'])
     ->name('catalog.show');
 
@@ -109,28 +114,49 @@ Route::prefix('forum')->group(function () {
 
     Route::middleware('auth')->group(function () {
 
+        // THREAD
+
         Route::get('/create', [ForumController::class, 'create'])
             ->name('forum.create');
 
         Route::post('/store', [ForumController::class, 'store'])
             ->name('forum.store');
 
+        Route::put('/{slug}', [ForumController::class, 'update'])
+            ->name('forum.update');
+
+        Route::delete('/{slug}', [ForumController::class, 'destroy'])
+            ->name('forum.destroy');
+
+        // REPLIES
+
         Route::post(
             '/{slug}/reply',
             [ForumReplyController::class, 'store']
         )->name('forum.reply.store');
 
+        Route::put(
+            '/reply/{reply}',
+            [ForumReplyController::class, 'update']
+        )->name('forum.reply.update');
+
+        Route::delete(
+            '/reply/{reply}',
+            [ForumReplyController::class, 'destroy']
+        )->name('forum.reply.destroy');
+
     });
 
+    // SHOW HARUS PALING BAWAH
     Route::get('/{slug}', [ForumController::class, 'show'])
         ->name('forum.show');
 
 });
 
 // Contact
-Route::get('/contact', function () {
-    return view('pages.contact.index');
-})->name('contact');
+// Route::get('/contact', function () {
+//     return view('pages.contact.index');
+// })->name('contact');
 
 // Profile Dashboard
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
@@ -150,17 +176,20 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
 
 });
 
-// Seller - Dashboard
-// Route::middleware(['auth'])
-//     ->prefix('seller')
-//     ->group(function () {
+// Contact
+Route::prefix('contact')->group(function () {
 
-//         Route::get(
-//             '/dashboard',
-//             [DashboardController::class, 'index']
-//         )->name('seller.dashboard');
+    Route::get(
+        '/',
+        [ContactController::class, 'index']
+    )->name('contact.index');
 
-//     });
+    Route::post(
+        '/',
+        [ContactController::class, 'store']
+    )->name('contact.store');
+
+});
 
 // Seller - Service
 Route::middleware(['auth'])
@@ -187,6 +216,54 @@ Route::middleware(['auth'])
             '/services/{id}',
             [ServiceController::class, 'destroy']
         )->name('services.destroy');
+
+    });
+
+// Cart
+Route::middleware('auth')
+    ->prefix('cart')
+    ->group(function () {
+
+        Route::get(
+            '/',
+            [CartController::class, 'index']
+        )->name('cart.index');
+
+        Route::post(
+            '/{service}',
+            [CartController::class, 'store']
+        )->name('cart.store');
+
+        Route::delete(
+            '/item/{item}',
+            [CartController::class, 'destroy']
+        )->name('cart.destroy');
+
+    });
+
+Route::middleware('auth')
+    ->prefix('chat')
+    ->group(function () {
+
+        Route::get(
+            '/',
+            [ConversationController::class, 'index']
+        )->name('chat.index');
+
+        Route::get(
+            '/{conversation}',
+            [ConversationController::class, 'show']
+        )->name('chat.show');
+
+        Route::post(
+            '/start/{provider}',
+            [ConversationController::class, 'store']
+        )->name('chat.start');
+
+        Route::post(
+            '/{conversation}/message',
+            [MessageController::class, 'store']
+        )->name('chat.message.store');
 
     });
 

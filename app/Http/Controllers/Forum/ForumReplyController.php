@@ -39,4 +39,49 @@ class ForumReplyController extends Controller
                 'Balasan berhasil dikirim.'
             );
     }
+
+    public function update(
+        Request $request,
+        ForumReply $reply
+    ) {
+        abort_if(
+            $reply->user_id !== Auth::id(),
+            403
+        );
+
+        $validated = $request->validate([
+            'content' => [
+                'required',
+                'min:10',
+            ],
+        ]);
+
+        $reply->update([
+            'content' => $validated['content'],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Balasan berhasil diperbarui.',
+        ]);
+    }
+
+    public function destroy(ForumReply $reply)
+    {
+        abort_if(
+            $reply->user_id !== Auth::id(),
+            403
+        );
+
+        $thread = $reply->thread;
+
+        $reply->delete();
+
+        $thread->decrement('replies_count');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Balasan berhasil dihapus.',
+        ]);
+    }
 }

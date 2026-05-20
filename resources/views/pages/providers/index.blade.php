@@ -101,10 +101,7 @@
                                             alt="{{ $provider->name }}" class="w-full h-full object-cover">
                                     @else
                                         @php
-                                            $initials = collect(explode(' ', trim($provider->name)))
-                                                ->map(fn($word) => strtoupper(substr($word, 0, 1)))
-                                                ->take(2)
-                                                ->implode('');
+                                            $initials = $user->initials; // Assuming you have a getInitialsAttribute in your User model
                                         @endphp
 
                                         <img src="https://ui-avatars.com/api/?name={{ urlencode($initials) }}&background=0D8ABC&color=fff&size=128"

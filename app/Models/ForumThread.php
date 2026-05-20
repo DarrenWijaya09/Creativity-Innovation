@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\ForumCategory;
+use Illuminate\Support\Facades\Auth;
 
 class ForumThread extends Model
 {
@@ -69,6 +71,19 @@ class ForumThread extends Model
         return $query->where(
             'status',
             'published'
+        );
+    }
+
+    public function isOwner(): bool
+    {
+        return Auth::check()
+            && Auth::id() === $this->user_id;
+    }
+
+    public function getHtmlContentAttribute()
+    {
+        return Str::markdown(
+            $this->content
         );
     }
 }

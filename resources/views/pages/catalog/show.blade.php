@@ -365,12 +365,36 @@
                                         Rp{{ number_format($service->price ?? 0, 0, ',', '.') }}</div>
                                     <span class="text-xs text-gray-400">/ sesi</span>
                                 </div>
-                                <button
-                                    class="w-full mt-4 bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 rounded-2xl transition shadow-md">Pesan
-                                    Sekarang</button>
-                                <button
-                                    class="w-full mt-3 border border-gray-300 text-gray-700 font-medium py-3 rounded-2xl hover:bg-gray-50 transition"><i
-                                        class="fab fa-whatsapp mr-2"></i> Chat Seller</button>
+                                <div class="space-y-3 mt-4">
+                                    {{-- BUY NOW --}}
+                                    <button
+                                        class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 rounded-2xl transition shadow-md">
+                                        Pesan Sekarang
+                                    </button>
+
+                                    {{-- ADD TO CART --}}
+                                    <form action="{{ route('cart.store', $service->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full border border-gray-200 hover:border-primary hover:bg-primary/5 text-gray-700 hover:text-primary font-semibold py-3.5 rounded-2xl transition flex items-center justify-center gap-2">
+                                            <i class="fas fa-shopping-cart text-sm"></i>
+                                            Tambah ke Keranjang
+                                        </button>
+                                    </form>
+
+                                    {{-- CHAT SELLER (Internal Marketplace Messaging) --}}
+                                    @if(optional($service->provider)->user_id)
+                                        <form action="{{ route('chat.start', ['provider' => $service->provider->user_id]) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="service_id" value="{{ $service->id }}">
+                                            <button type="submit"
+                                                class="w-full border border-gray-300 text-gray-700 font-medium py-3 rounded-2xl hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                                <i class="fas fa-comments text-primary"></i>
+                                                Chat Seller
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                             <div class="p-6 space-y-4">
                                 <div class="flex items-center justify-between text-sm"><span
@@ -450,12 +474,22 @@
                 <div><span class="text-xs text-gray-500">Mulai dari</span>
                     <p class="text-xl font-bold text-primary">Rp{{ number_format($service->price ?? 0, 0, ',', '.') }}</p>
                 </div>
-                <button
-                    class="flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl transition shadow-md">Pesan
-                    Sekarang</button>
-                <button
-                    class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition"><i
-                        class="fab fa-whatsapp text-primary text-xl"></i></button>
+                <div class="flex gap-2">
+                    <button
+                        class="flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl transition shadow-md">
+                        Pesan Sekarang
+                    </button>
+                    @if(optional($service->provider)->user_id)
+                        <form action="{{ route('chat.start', ['provider' => $service->provider->user_id]) }}" method="POST" class="flex">
+                            @csrf
+                            <input type="hidden" name="service_id" value="{{ $service->id }}">
+                            <button type="submit"
+                                class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition">
+                                <i class="fas fa-comments text-primary text-xl"></i>
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
         </div>
         <div class="lg:hidden h-24"></div>

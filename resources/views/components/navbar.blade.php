@@ -19,7 +19,7 @@
                 class="{{ request()->is('providers*') ? 'text-primary font-semibold' : '' }}">Penyedia</a>
             <a href="{{ route('forum.index') }}"
                 class="{{ request()->is('forum*') ? 'text-primary font-semibold' : '' }}">Forum</a>
-            <a href="{{ route('contact') }}"
+            <a href="{{ route('contact.index') }}"
                 class="{{ request()->is('contact') ? 'text-primary font-semibold' : '' }}">Kontak</a>
             <a href="{{ route('about') }}"
                 class="{{ request()->is('about') ? 'text-primary font-semibold' : '' }}">Tentang</a>
@@ -29,11 +29,20 @@
         <div class="flex items-center gap-4">
 
             <!-- SEARCH -->
-            <div class="relative hidden md:block">
-                <input type="text" placeholder="Cari jasa..."
-                    class="pl-10 pr-4 py-2 rounded-full border border-gray-200 text-sm focus:ring-2 focus:ring-primary w-52">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            </div>
+            <form action="{{ route('catalog.index') }}" method="GET" class="relative hidden md:block">
+
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Cari logo design, website, video editor..." autocomplete="off"
+                    class="pl-11 pr-4 py-2.5 rounded-full border border-gray-200 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary w-64 transition bg-white">
+
+                <button type="submit"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition">
+
+                    <i class="fas fa-search text-sm"></i>
+
+                </button>
+
+            </form>
 
             <!-- 🛒 MINI CART -->
             <div class="relative">
@@ -43,10 +52,12 @@
                     <i class="fas fa-shopping-cart text-lg"></i>
 
                     <!-- Badge -->
-                    <span id="cartCount"
-                        class="absolute -top-2 -right-2 bg-primary text-white text-[10px] px-1.5 rounded-full">
-                        0
-                    </span>
+                    @if ($cartCount > 0)
+                        <span id="cartCount"
+                            class="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1.5 bg-primary text-white text-[10px] rounded-full flex items-center justify-center font-medium">
+                            {{ $cartCount }}
+                        </span>
+                    @endif
                 </button>
 
                 <!-- DROPDOWN -->
@@ -55,58 +66,95 @@
 
                     <!-- HEADER -->
                     <div class="flex justify-between items-center px-4 py-3 border-b">
-                        <p class="font-semibold text-sm">
-                            Keranjang (0)
+                        <p class="font-semibold text-sm flex items-center gap-2">
+                            Keranjang
+                            @if ($cartCount > 0)
+                                <span
+                                    class="min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-white text-[11px] flex items-center justify-center">
+                                    {{ $cartCount }}
+                                </span>
+                            @endif
                         </p>
 
-                        <a href="" class="text-primary text-sm font-medium hover:underline">
+                        <a href="{{ route('cart.index') }}" class="text-primary text-sm font-medium hover:underline">
                             Lihat
                         </a>
                     </div>
 
                     <!-- LIST (HIDDEN DEFAULT) -->
-                    <div id="cartItems" class="hidden max-h-80 overflow-y-auto">
+                    {{-- CART ITEMS --}}
+                    @if ($globalCartItems->count() > 0)
+                        <div class="max-h-80 overflow-y-auto">
+                            @foreach ($globalCartItems as $item)
+                                <div class="flex gap-3 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition">
+                                    {{-- IMAGE --}}
+                                    <div class="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                                        @if ($item->service?->image)
+                                            @if (Str::startsWith($item->service->image, 'http'))
+                                                <img src="{{ $item->service->image }}"
+                                                    class="w-full h-full object-cover">
+                                            @else
+                                                <img src="{{ asset('storage/' . $item->service->image) }}"
+                                                    class="w-full h-full object-cover">
+                                            @endif
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                        @endif
+                                    </div>
 
-                        <!-- ITEM TEMPLATE -->
-                        <div class="flex gap-3 px-4 py-3 border-b">
-                            <img src="https://via.placeholder.com/60" class="w-14 h-14 rounded-lg object-cover">
+                                    {{-- CONTENT --}}
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900 line-clamp-1">
+                                            {{ $item->service?->title }}</p>
 
-                            <div class="flex-1">
-                                <p class="text-sm font-medium line-clamp-1">
-                                    Nama Produk
-                                </p>
+                                        <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">
+                                            {{ $item->service?->provider?->name }}</p>
 
-                                <div class="flex justify-between items-center mt-1">
-                                    <p class="text-xs text-gray-500">1x</p>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <p class="text-xs text-gray-400">{{ $item->quantity }}x</p>
 
-                                    <div class="text-right">
-                                        <p class="text-sm font-semibold">Rp0</p>
+                                            <p class="text-sm font-bold text-gray-900">
+                                                Rp{{ number_format($item->price_snapshot, 0, ',', '.') }}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
+                            @endforeach
+
+                            {{-- FOOTER --}}
+                            <div class="p-4 border-t border-gray-100 bg-white">
+                                <a href="{{ route('cart.index') }}"
+                                    class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-shopping-cart text-sm"></i>
+                                    Lihat Keranjang
+                                </a>
                             </div>
                         </div>
-
-                    </div>
+                    @endif
 
                     <!-- EMPTY STATE (DEFAULT) -->
-                    <div id="cartEmpty" class="p-6 text-center">
+                    @if ($globalCartItems->count() === 0)
+                        <div id="cartEmpty" class="p-6 text-center">
 
-                        <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" class="w-20 mx-auto mb-3">
+                            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
+                                class="w-20 mx-auto mb-3">
 
-                        <p class="text-sm font-semibold mb-1">
-                            Wah, keranjang belanjamu kosong
-                        </p>
+                            <p class="text-sm font-semibold mb-1">
+                                Wah, keranjang belanjamu kosong
+                            </p>
 
-                        <p class="text-xs text-gray-500 mb-4">
-                            Yuk, isi dengan jasa impianmu!
-                        </p>
+                            <p class="text-xs text-gray-500 mb-4">
+                                Yuk, isi dengan jasa impianmu!
+                            </p>
 
-                        <a href="{{ url('/catalog') }}"
-                            class="border border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition text-sm">
-                            Mulai Belanja
-                        </a>
-                    </div>
-
+                            <a href="{{ url('/catalog') }}"
+                                class="border border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition text-sm">
+                                Mulai Belanja
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
 

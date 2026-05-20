@@ -10,39 +10,66 @@ class CatalogController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Service::with('provider')
+        $query = Service::query()
+            ->with([
+                'provider:id,user_id,name,slug,avatar',
+            ])
             ->where('status', 'published');
 
-        // Search filter
+        // SEARCH
         if ($request->filled('search')) {
 
-            $search = $request->search;
+            $search = trim($request->search);
 
             $query->where(function ($q) use ($search) {
 
+                // SERVICE TITLE
                 $q->where(
                     'title',
                     'like',
                     "%{$search}%"
-                )->orWhere(
-                        'description',
+                )
+
+                // SERVICE DESCRIPTION
+                ->orWhere(
+                    'description',
+                    'like',
+                    "%{$search}%"
+                )
+
+                // CATEGORY
+                ->orWhere(
+                    'category',
+                    'like',
+                    "%{$search}%"
+                )
+
+                // PROVIDER NAME
+                ->orWhereHas('provider', function ($provider) use ($search) {
+
+                    $provider->where(
+                        'name',
                         'like',
                         "%{$search}%"
                     );
 
+                });
+
             });
+
         }
 
-        // Multiple category filter
+        // CATEGORY FILTER
         if ($request->filled('category')) {
 
             $query->whereIn(
                 'category',
                 $request->category
             );
+
         }
 
-        // Rating filter
+        // RATING FILTER
         if ($request->filled('rating')) {
 
             $query->where(
@@ -50,9 +77,10 @@ class CatalogController extends Controller
                 '>=',
                 (float) $request->rating
             );
+
         }
 
-        // Minimum price filter
+        // MIN PRICE
         if ($request->filled('min_price')) {
 
             $query->where(
@@ -60,9 +88,10 @@ class CatalogController extends Controller
                 '>=',
                 (int) $request->min_price
             );
+
         }
 
-        // Maximum price filter
+        // MAX PRICE
         if ($request->filled('max_price')) {
 
             $query->where(
@@ -70,37 +99,59 @@ class CatalogController extends Controller
                 '<=',
                 (int) $request->max_price
             );
+
         }
 
-        // Sorting
+        // SORTING
         switch ($request->get('sort')) {
 
             case 'price_low':
+
                 $query->orderBy('price', 'asc');
+
                 break;
 
             case 'price_high':
+
                 $query->orderBy('price', 'desc');
+
                 break;
 
             case 'rating':
+
                 $query->orderBy('rating', 'desc');
+
                 break;
 
             default:
-                $query->latest();
+
+                // SEARCH PRIORITY
+                if ($request->filled('search')) {
+
+                    $query
+                        ->orderByDesc('rating')
+                        ->latest();
+
+                } else {
+
+                    $query->latest();
+
+                }
+
                 break;
         }
 
-        // Pagination
+        // PAGINATION
         $services = $query
             ->paginate(12)
             ->withQueryString();
 
-        // Categories
-        $categories = Service::where('status', 'published')
+        // CATEGORIES
+        $categories = Service::query()
+            ->where('status', 'published')
             ->select('category')
             ->distinct()
+            ->orderBy('category')
             ->pluck('category');
 
         return view(
@@ -114,16 +165,24 @@ class CatalogController extends Controller
 
     public function show($slug)
     {
-        $service = Service::with('provider')
+        $service = Service::query()
+            ->with([
+                'provider:id,user_id,name,slug,avatar',
+            ])
             ->where('status', 'published')
             ->where('slug', $slug)
             ->firstOrFail();
 
-        // Recommended services
-        $recommended = Service::with('provider')
+        // RECOMMENDED SERVICES
+        $recommended = Service::query()
+            ->with([
+                'provider:id,user_id,name,slug,avatar',
+            ])
             ->where('status', 'published')
             ->where('category', $service->category)
-            ->where('id', '!=', $service->slug)
+            ->where('id', '!=', $service->id)
+            ->orderByDesc('rating')
+            ->latest()
             ->limit(4)
             ->get();
 
@@ -135,5 +194,4 @@ class CatalogController extends Controller
             )
         );
     }
-
 }
