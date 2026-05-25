@@ -5,28 +5,24 @@
 @section('content')
 <div class="min-h-screen bg-white">
 
-    <!-- ==================== SINGLE MAIN NAVBAR ONLY ==================== -->
-    <!-- Navbar is already in layouts/app.blade.php -->
-    <!-- This ensures NO duplicate navigation -->
-
     <main class="max-w-7xl mx-auto px-6 lg:px-8 py-8 lg:py-12">
 
         <!-- ==================== DASHBOARD HEADER ==================== -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
             <div>
                 <h1 class="text-3xl lg:text-4xl font-bold text-gray-900">
-                    Halo, Darren <span class="inline-block animate-wave">👋</span>
+                    Halo, {{ auth()->user()->name }} <span class="inline-block animate-wave">👋</span>
                 </h1>
-                <p class="text-gray-500 mt-1">Senang melihat Anda kembali. Ada 3 update baru untuk Anda.</p>
+                <p class="text-gray-500 mt-1">Kelola aktivitas, jasa tersimpan, dan pesananmu di satu tempat.</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="#" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition shadow-sm">
+                <a href="{{ route('catalog.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition shadow-sm">
                     <i class="fas fa-search text-sm"></i> Cari Jasa
                 </a>
-                <a href="#" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-50 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-100 transition border border-gray-200">
+                <a href="{{ route('saved.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-50 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-100 transition border border-gray-200">
                     <i class="fas fa-heart text-sm"></i> Wishlist
                 </a>
-                <a href="#" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-50 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-100 transition border border-gray-200">
+                <a href="" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-50 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-100 transition border border-gray-200">
                     <i class="fas fa-shopping-bag text-sm"></i> Lihat Pesanan
                 </a>
             </div>
@@ -38,31 +34,39 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Total Pesanan</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-1">8</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalOrders) }}</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition">
                         <i class="fas fa-shopping-bag text-primary text-xl"></i>
                     </div>
                 </div>
-                <p class="text-xs text-green-600 mt-3">↑ +2 dari bulan lalu</p>
+                @if($newOrders > 0)
+                    <p class="text-xs text-green-600 mt-3">↑ +{{ $newOrders }} dari bulan lalu</p>
+                @else
+                    <p class="text-xs text-gray-400 mt-3">Tidak ada pesanan baru</p>
+                @endif
             </div>
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition group">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Wishlist</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-1">12</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalSaved) }}</p>
                     </div>
                     <div class="w-12 h-12 bg-pink-50 rounded-xl flex items-center justify-center group-hover:bg-pink-100 transition">
                         <i class="fas fa-heart text-pink-500 text-xl"></i>
                     </div>
                 </div>
-                <p class="text-xs text-gray-500 mt-3">3 jasa baru ditambahkan</p>
+                @if($newSaved > 0)
+                    <p class="text-xs text-gray-500 mt-3">+{{ $newSaved }} jasa baru ditambahkan</p>
+                @else
+                    <p class="text-xs text-gray-400 mt-3">Belum ada jasa baru</p>
+                @endif
             </div>
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition group">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Pesanan Aktif</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-1">3</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($activeOrders) }}</p>
                     </div>
                     <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition">
                         <i class="fas fa-clock text-green-500 text-xl"></i>
@@ -79,112 +83,90 @@
                     <h2 class="text-xl font-bold text-gray-900">Pesanan Terbaru</h2>
                     <p class="text-sm text-gray-500 mt-0.5">Update status pesanan Anda</p>
                 </div>
-                <a href="#" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
+                <a href="" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
             </div>
             <div class="space-y-3">
-                <!-- Order 1 -->
+                @forelse($recentOrders as $order)
                 <div class="bg-white rounded-xl p-4 border border-gray-100 hover:shadow-md transition">
                     <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                         <div class="flex gap-4 flex-1">
-                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=60&h=60&fit=crop" alt="Service" class="w-14 h-14 rounded-xl object-cover">
+                            <img src="{{ optional($order->service)->image ? asset('storage/' . $order->service->image) : 'https://placehold.co/60x60/png?text=No+Image' }}"
+                                 alt="{{ optional($order->service)->title }}"
+                                 class="w-14 h-14 rounded-xl object-cover">
                             <div>
-                                <h3 class="font-semibold text-gray-900">Les Matematika SMA</h3>
-                                <p class="text-sm text-gray-500">Bunda Sari</p>
+                                <h3 class="font-semibold text-gray-900">{{ optional($order->service)->title ?? 'Jasa tidak tersedia' }}</h3>
+                                <p class="text-sm text-gray-500">{{ optional(optional($order->service)->provider)->name ?? 'Penyedia' }}</p>
                                 <div class="flex items-center gap-3 mt-1">
-                                    <span class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i> 2 Mei 2025</span>
-                                    <span class="text-sm font-semibold text-primary">Rp50.000</span>
+                                    <span class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i> {{ $order->created_at->format('d M Y') }}</span>
+                                    <span class="text-sm font-semibold text-primary">Rp{{ number_format($order->total_price, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="px-3 py-1.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">Diproses</span>
-                            <button class="text-primary text-sm font-medium hover:underline">Detail →</button>
+                            @php
+                                $statusColors = [
+                                    'pending' => 'bg-gray-100 text-gray-600',
+                                    'processing' => 'bg-yellow-100 text-yellow-700',
+                                    'completed' => 'bg-green-100 text-green-700',
+                                    'cancelled' => 'bg-red-100 text-red-700',
+                                ];
+                            @endphp
+                            <span class="px-3 py-1.5 {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-600' }} text-xs font-medium rounded-full">
+                                {{ ucfirst($order->status) }}
+                            </span>
+                            <a href="{{ route('orders.show', $order->id) }}" class="text-primary text-sm font-medium hover:underline">Detail →</a>
                         </div>
                     </div>
                 </div>
-                <!-- Order 2 -->
-                <div class="bg-white rounded-xl p-4 border border-gray-100 hover:shadow-md transition">
-                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                        <div class="flex gap-4 flex-1">
-                            <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=60&h=60&fit=crop" alt="Service" class="w-14 h-14 rounded-xl object-cover">
-                            <div>
-                                <h3 class="font-semibold text-gray-900">Desain Logo Profesional</h3>
-                                <p class="text-sm text-gray-500">Design Studio ID</p>
-                                <div class="flex items-center gap-3 mt-1">
-                                    <span class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i> 28 April 2025</span>
-                                    <span class="text-sm font-semibold text-primary">Rp250.000</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="px-3 py-1.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">Selesai</span>
-                            <button class="text-primary text-sm font-medium hover:underline">Detail →</button>
-                        </div>
-                    </div>
+                @empty
+                <div class="text-center py-8 bg-gray-50 rounded-xl">
+                    <i class="fas fa-shopping-bag text-gray-300 text-3xl mb-2"></i>
+                    <p class="text-gray-500 text-sm">Belum ada pesanan</p>
+                    <a href="{{ route('catalog.index') }}" class="text-primary text-sm hover:underline mt-1 inline-block">Mulai berbelanja →</a>
                 </div>
-                <!-- Order 3 -->
-                <div class="bg-white rounded-xl p-4 border border-gray-100 hover:shadow-md transition">
-                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                        <div class="flex gap-4 flex-1">
-                            <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=60&h=60&fit=crop" alt="Service" class="w-14 h-14 rounded-xl object-cover">
-                            <div>
-                                <h3 class="font-semibold text-gray-900">Perbaikan AC & Kulkas</h3>
-                                <p class="text-sm text-gray-500">Technician Plus</p>
-                                <div class="flex items-center gap-3 mt-1">
-                                    <span class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i> 25 April 2025</span>
-                                    <span class="text-sm font-semibold text-primary">Rp150.000</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Pending</span>
-                            <button class="text-primary text-sm font-medium hover:underline">Detail →</button>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
 
-        <!-- ==================== WISHLIST + CONTINUE BROWSING GRID ==================== -->
+        <!-- ==================== SAVED SERVICES + CONTINUE BROWSING GRID ==================== -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
 
-            <!-- Wishlist Preview -->
+            <!-- Saved Services Preview (Wishlist) -->
             <div>
                 <div class="flex items-center justify-between mb-5">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900">Wishlist</h2>
+                        <h2 class="text-xl font-bold text-gray-900">Jasa Tersimpan</h2>
                         <p class="text-sm text-gray-500 mt-0.5">Jasa yang Anda simpan</p>
                     </div>
-                    <a href="#" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
+                    <a href="{{ route('saved.index') }}" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
                 </div>
                 <div class="space-y-3">
-                    <div class="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3 hover:shadow-sm transition">
-                        <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=50&h=50&fit=crop" alt="Service" class="w-12 h-12 rounded-lg object-cover">
+                    @forelse($savedServices as $service)
+                    <div class="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3 hover:shadow-sm transition group">
+                        <img src="{{ $service->image ? asset('storage/' . $service->image) : 'https://placehold.co/50x50/png?text=No+Image' }}"
+                             alt="{{ $service->title }}"
+                             class="w-12 h-12 rounded-lg object-cover">
                         <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900 text-sm">Les Bahasa Inggris</h4>
-                            <p class="text-xs text-gray-500">English Buddy</p>
-                            <p class="font-bold text-primary text-sm mt-1">Rp75.000</p>
+                            <h4 class="font-semibold text-gray-900 text-sm line-clamp-1">{{ $service->title }}</h4>
+                            <p class="text-xs text-gray-500">{{ optional($service->provider)->name ?? 'Penyedia' }}</p>
+                            <p class="font-bold text-primary text-sm mt-1">Rp{{ number_format($service->price, 0, ',', '.') }}</p>
                         </div>
-                        <button class="text-red-500 hover:text-red-600 transition"><i class="fas fa-heart"></i></button>
+                        <form action="{{ route('saved.destroy', $service->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:text-red-600 transition p-1">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </form>
                     </div>
-                    <div class="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3 hover:shadow-sm transition">
-                        <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=50&h=50&fit=crop" alt="Service" class="w-12 h-12 rounded-lg object-cover">
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900 text-sm">Website Company Profile</h4>
-                            <p class="text-xs text-gray-500">WebDev Expert</p>
-                            <p class="font-bold text-primary text-sm mt-1">Rp1.500.000</p>
-                        </div>
-                        <button class="text-red-500 hover:text-red-600 transition"><i class="fas fa-heart"></i></button>
+                    @empty
+                    <div class="bg-white rounded-xl p-8 border border-gray-100 text-center">
+                        <i class="fas fa-heart text-gray-300 text-3xl mb-2"></i>
+                        <p class="text-gray-500 text-sm">Belum ada jasa tersimpan</p>
+                        <p class="text-xs text-gray-400 mt-1">Simpan jasa favoritmu untuk dilihat nanti</p>
+                        <a href="{{ route('catalog.index') }}" class="inline-block mt-3 text-primary text-sm hover:underline">Cari Jasa →</a>
                     </div>
-                    <div class="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3 hover:shadow-sm transition">
-                        <img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=50&h=50&fit=crop" alt="Service" class="w-12 h-12 rounded-lg object-cover">
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900 text-sm">Pijat Kebugaran</h4>
-                            <p class="text-xs text-gray-500">Sehat Sejati</p>
-                            <p class="font-bold text-primary text-sm mt-1">Rp120.000</p>
-                        </div>
-                        <button class="text-gray-300 hover:text-red-500 transition"><i class="far fa-heart"></i></button>
-                    </div>
+                    @endforelse
                 </div>
             </div>
 
@@ -195,27 +177,29 @@
                         <h2 class="text-xl font-bold text-gray-900">Terakhir Dilihat</h2>
                         <p class="text-sm text-gray-500 mt-0.5">Lanjutkan eksplorasi Anda</p>
                     </div>
-                    <a href="#" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
+                    <a href="{{ route('catalog.index') }}" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
                 </div>
                 <div class="space-y-3">
-                    <div class="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3 hover:shadow-sm transition">
-                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=50&h=50&fit=crop" alt="Service" class="w-12 h-12 rounded-lg object-cover">
+                    @forelse($recentlyViewed as $service)
+                    <div class="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3 hover:shadow-sm transition group">
+                        <img src="{{ $service->image ? asset('storage/' . $service->image) : 'https://placehold.co/50x50/png?text=No+Image' }}"
+                             alt="{{ $service->title }}"
+                             class="w-12 h-12 rounded-lg object-cover">
                         <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900 text-sm">Les Matematika SD</h4>
-                            <p class="text-xs text-gray-500">Bunda Sari</p>
-                            <p class="font-bold text-primary text-sm mt-1">Rp40.000</p>
+                            <h4 class="font-semibold text-gray-900 text-sm line-clamp-1">{{ $service->title }}</h4>
+                            <p class="text-xs text-gray-500">{{ optional($service->provider)->name ?? 'Penyedia' }}</p>
+                            <p class="font-bold text-primary text-sm mt-1">Rp{{ number_format($service->price, 0, ',', '.') }}</p>
                         </div>
-                        <button class="text-primary text-sm font-medium hover:underline">Lihat</button>
+                        <a href="{{ route('catalog.show', $service->slug) }}" class="text-primary text-sm font-medium hover:underline">Lihat</a>
                     </div>
-                    <div class="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3 hover:shadow-sm transition">
-                        <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=50&h=50&fit=crop" alt="Service" class="w-12 h-12 rounded-lg object-cover">
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900 text-sm">Desain UI/UX</h4>
-                            <p class="text-xs text-gray-500">Creative Studio</p>
-                            <p class="font-bold text-primary text-sm mt-1">Rp350.000</p>
-                        </div>
-                        <button class="text-primary text-sm font-medium hover:underline">Lihat</button>
+                    @empty
+                    <div class="bg-white rounded-xl p-8 border border-gray-100 text-center">
+                        <i class="fas fa-history text-gray-300 text-3xl mb-2"></i>
+                        <p class="text-gray-500 text-sm">Belum ada riwayat dilihat</p>
+                        <p class="text-xs text-gray-400 mt-1">Jelajahi jasa yang Anda minati</p>
+                        <a href="{{ route('catalog.index') }}" class="inline-block mt-3 text-primary text-sm hover:underline">Mulai Jelajahi →</a>
                     </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -227,36 +211,26 @@
                     <h2 class="text-xl font-bold text-gray-900">Notifikasi Terbaru</h2>
                     <p class="text-sm text-gray-500 mt-0.5">Update aktivitas Anda</p>
                 </div>
-                <a href="#" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
+                <a href="" class="text-primary text-sm font-medium hover:underline">Lihat semua →</a>
             </div>
             <div class="space-y-2">
+                @forelse($notifications as $notification)
                 <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition">
-                    <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-check text-primary text-xs"></i>
+                    <div class="w-8 h-8 {{ $notification->bg_color ?? 'bg-blue-50' }} rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="{{ $notification->icon ?? 'fas fa-bell' }} {{ $notification->icon_color ?? 'text-primary' }} text-xs"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="text-sm text-gray-800">Pesanan Anda <span class="font-medium">Les Matematika SMA</span> telah selesai</p>
-                        <p class="text-xs text-gray-400 mt-0.5">2 jam yang lalu</p>
+                        <p class="text-sm text-gray-800">{!! $notification->message !!}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ $notification->created_at->diffForHumans() }}</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition">
-                    <div class="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-tag text-green-500 text-xs"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-800">Promo spesial: <span class="font-medium">diskon 20%</span> untuk jasa desain</p>
-                        <p class="text-xs text-gray-400 mt-0.5">5 jam yang lalu</p>
-                    </div>
+                @empty
+                <div class="text-center py-8 bg-gray-50 rounded-xl">
+                    <i class="fas fa-bell-slash text-gray-300 text-3xl mb-2"></i>
+                    <p class="text-gray-500 text-sm">Belum ada notifikasi</p>
+                    <p class="text-xs text-gray-400 mt-1">Kami akan memberitahu Anda jika ada update</p>
                 </div>
-                <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition">
-                    <div class="w-8 h-8 bg-purple-50 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-comment text-purple-500 text-xs"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-800"><span class="font-medium">Design Studio ID</span> merespon pesan Anda</p>
-                        <p class="text-xs text-gray-400 mt-0.5">1 hari yang lalu</p>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
 
@@ -268,16 +242,16 @@
                     <p class="text-sm text-gray-500 mt-0.5">Akses fitur favorit Anda dengan mudah</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="#" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
+                    <a href="{{ route('saved.index') }}" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
                         <i class="fas fa-heart mr-2 text-pink-500"></i> Wishlist
                     </a>
-                    <a href="#" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
+                    <a href="{{ route('catalog.index') }}" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
                         <i class="fas fa-search mr-2 text-primary"></i> Cari Jasa
                     </a>
-                    <a href="#" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
+                    <a href="{{ route('profile.edit') }}" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
                         <i class="fas fa-user-edit mr-2 text-gray-500"></i> Edit Profil
                     </a>
-                    <a href="#" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
+                    <a href="{{ route('cart.index') }}" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition shadow-sm border border-gray-200">
                         <i class="fas fa-shopping-cart mr-2 text-primary"></i> Keranjang
                     </a>
                 </div>
@@ -302,6 +276,13 @@
 
     .animate-wave:hover {
         animation: wave 0.6s ease-in-out;
+    }
+
+    .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 </style>
 @endpush

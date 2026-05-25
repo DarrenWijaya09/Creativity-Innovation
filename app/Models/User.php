@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Provider;
+use App\Models\Service;
 
 class User extends Authenticatable
 {
@@ -86,5 +87,13 @@ class User extends Authenticatable
             Message::class,
             'sender_id'
         );
+    }
+
+    public function savedServices()
+    {
+        return $this->belongsToMany(
+            Service::class,
+            'saved_services'
+        )->withTimestamps();
     }
 }

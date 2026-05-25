@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Catalog;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Service;
+use Illuminate\Support\Facades\Auth;
 
 class CatalogController extends Controller
 {
@@ -18,126 +19,54 @@ class CatalogController extends Controller
 
         // SEARCH
         if ($request->filled('search')) {
-
             $search = trim($request->search);
 
             $query->where(function ($q) use ($search) {
-
-                // SERVICE TITLE
-                $q->where(
-                    'title',
-                    'like',
-                    "%{$search}%"
-                )
-
-                // SERVICE DESCRIPTION
-                ->orWhere(
-                    'description',
-                    'like',
-                    "%{$search}%"
-                )
-
-                // CATEGORY
-                ->orWhere(
-                    'category',
-                    'like',
-                    "%{$search}%"
-                )
-
-                // PROVIDER NAME
-                ->orWhereHas('provider', function ($provider) use ($search) {
-
-                    $provider->where(
-                        'name',
-                        'like',
-                        "%{$search}%"
-                    );
-
-                });
-
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%")
+                    ->orWhereHas('provider', function ($provider) use ($search) {
+                        $provider->where('name', 'like', "%{$search}%");
+                    });
             });
-
         }
 
-        // CATEGORY FILTER
+        // MULTIPLE CATEGORY FILTER
         if ($request->filled('category')) {
-
-            $query->whereIn(
-                'category',
-                $request->category
-            );
-
+            $query->whereIn('category', $request->category);
         }
 
         // RATING FILTER
         if ($request->filled('rating')) {
-
-            $query->where(
-                'rating',
-                '>=',
-                (float) $request->rating
-            );
-
+            $query->where('rating', '>=', (float) $request->rating);
         }
 
-        // MIN PRICE
+        // MIN PRICE FILTER
         if ($request->filled('min_price')) {
-
-            $query->where(
-                'price',
-                '>=',
-                (int) $request->min_price
-            );
-
+            $query->where('price', '>=', (int) $request->min_price);
         }
 
-        // MAX PRICE
+        // MAX PRICE FILTER
         if ($request->filled('max_price')) {
-
-            $query->where(
-                'price',
-                '<=',
-                (int) $request->max_price
-            );
-
+            $query->where('price', '<=', (int) $request->max_price);
         }
 
         // SORTING
         switch ($request->get('sort')) {
-
             case 'price_low':
-
                 $query->orderBy('price', 'asc');
-
                 break;
 
             case 'price_high':
-
                 $query->orderBy('price', 'desc');
-
                 break;
 
             case 'rating':
-
                 $query->orderBy('rating', 'desc');
-
                 break;
 
             default:
-
-                // SEARCH PRIORITY
-                if ($request->filled('search')) {
-
-                    $query
-                        ->orderByDesc('rating')
-                        ->latest();
-
-                } else {
-
-                    $query->latest();
-
-                }
-
+                $query->latest();
                 break;
         }
 
@@ -147,18 +76,30 @@ class CatalogController extends Controller
             ->withQueryString();
 
         // CATEGORIES
-        $categories = Service::query()
-            ->where('status', 'published')
+        $categories = Service::where('status', 'published')
             ->select('category')
             ->distinct()
-            ->orderBy('category')
             ->pluck('category');
+
+        // SAVED SERVICES
+        $savedServiceIds = [];
+
+        if (Auth::check()) {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            $savedServiceIds = $user
+                ->savedServices()
+                ->pluck('services.id')
+                ->toArray();
+        }
 
         return view(
             'pages.catalog.index',
             compact(
                 'services',
-                'categories'
+                'categories',
+                'savedServiceIds'
             )
         );
     }

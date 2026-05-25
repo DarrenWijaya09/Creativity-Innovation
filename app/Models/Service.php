@@ -25,4 +25,12 @@ class Service extends Model
     {
         return $this->belongsTo(Provider::class);
     }
+
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'saved_services'
+        )->withTimestamps();
+    }
 }

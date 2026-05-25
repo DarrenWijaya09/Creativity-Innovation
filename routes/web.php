@@ -1,86 +1,73 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use App\Http\Controllers\syaratKetentuan\SyaratController;
 use App\Http\Controllers\Catalog\CatalogController;
 use App\Http\Controllers\Provider\ProviderController;
 use App\Http\Controllers\Forum\ForumController;
-use App\Http\Controllers\Dashboard\ProfileController as DashboardProfileController;
-use App\Http\Controllers\Seller\ServiceController;
-use App\Http\Controllers\Seller\DashboardController;
-use App\Http\Controllers\HomeController;
-use App\Models\Service;
 use App\Http\Controllers\Forum\ForumReplyController;
 use App\Http\Controllers\Contact\ContactController;
 use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\Chat\ConversationController;
 use App\Http\Controllers\Chat\MessageController;
+use App\Http\Controllers\Service\SavedServiceController;
+use App\Http\Controllers\Seller\ServiceController;
+use App\Http\Controllers\Seller\DashboardController as SellerDashboardController;
+use App\Http\Controllers\Dashboard\ProfileController as DashboardProfileController;
+use App\Http\Controllers\Dashboard\DashboardController as UserDashboardController;
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTES
+|--------------------------------------------------------------------------
+*/
 
 // Home
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+// Google Auth
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
+    ->name('google.login');
 
-    Route::get('/dashboard', function () {
-        return view('pages.dashboard.index');
-    })->middleware('rolemanager:customer')->name('dashboard');
-
-    Route::get('/admin/dashboard', function () {
-        return view('admin');
-    })->middleware('rolemanager:admin')->name('admin');
-
-    // Route::get('/seller/dashboard', function () {
-    //     $services = Service::latest()->get();
-    //     return view('seller-pages.dashboard', compact('services'));
-    // })->middleware('rolemanager:seller')->name('seller');
-
-});
-
-Route::middleware(['auth', 'rolemanager:seller'])
-    ->prefix('seller')
-    ->group(function () {
-
-        Route::get(
-            '/dashboard',
-            [DashboardController::class, 'index']
-        )->name('seller.dashboard');
-
-    });
-
-// Google Login
-Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('google.login');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 
-// Syarat
-// Route::get('/syarat-ketentuan', [SyaratController::class, 'index'])->name('syarat-ketentuan');
-Route::get('/who-we-are', function () {
-    return view('syarat-ketentuan.profile');
-})->name('who-we-are');
+// Static Pages
+Route::view('/who-we-are', 'syarat-ketentuan.profile')
+    ->name('who-we-are');
 
-// Syarat & Ketentuan (sudah ada biasanya, tapi pastikan)
-Route::get('/syarat-ketentuan', function () {
-    return view('syarat-ketentuan.hak');
-})->name('syarat-ketentuan');
+Route::view('/syarat-ketentuan', 'syarat-ketentuan.hak')
+    ->name('syarat-ketentuan');
 
-// Ruang Edukasi
-Route::get('/ruang-edukasi', function () {
-    return view('syarat-ketentuan.edukasi');
-})->name('ruang-edukasi');
+Route::view('/ruang-edukasi', 'syarat-ketentuan.edukasi')
+    ->name('ruang-edukasi');
 
-// Catalog
-Route::get('/catalog', [CatalogController::class, 'index'])
-    ->name('catalog.index');
-Route::get('/catalog/{slug}', [CatalogController::class, 'show'])
-    ->name('catalog.show');
+Route::view('/about', 'pages.about.index')
+    ->name('about');
 
-// Profile
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+/*
+|--------------------------------------------------------------------------
+| CATALOG
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('catalog')->group(function () {
+
+    Route::get('/', [CatalogController::class, 'index'])
+        ->name('catalog.index');
+
+    Route::get('/{slug}', [CatalogController::class, 'show'])
+        ->name('catalog.show');
+
 });
 
-// Penyedia
+/*
+|--------------------------------------------------------------------------
+| PROVIDERS
+|--------------------------------------------------------------------------
+*/
+
 Route::prefix('providers')->group(function () {
 
     Route::get('/', [ProviderController::class, 'index'])
@@ -91,7 +78,74 @@ Route::prefix('providers')->group(function () {
 
 });
 
+/*
+|--------------------------------------------------------------------------
+| CONTACT
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('contact')->group(function () {
+
+    Route::get('/', [ContactController::class, 'index'])
+        ->name('contact.index');
+
+    Route::post('/', [ContactController::class, 'store'])
+        ->name('contact.store');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| FORUM
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('forum')->group(function () {
+
+    Route::get('/', [ForumController::class, 'index'])
+        ->name('forum.index');
+
+    Route::get('/{slug}', [ForumController::class, 'show'])
+        ->name('forum.show');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('dashboard')->group(function () {
+
+        Route::get('/', [UserDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        Route::prefix('profile')->group(function () {
+
+            Route::get('/', [DashboardProfileController::class, 'index'])
+                ->name('profile.index');
+
+            Route::put('/update', [DashboardProfileController::class, 'update'])
+                ->name('profile.update');
+
+        });
+
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROVIDER REGISTRATION
+    |--------------------------------------------------------------------------
+    */
 
     Route::get('/become-provider', [ProviderController::class, 'create'])
         ->name('provider.create');
@@ -99,23 +153,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/become-provider', [ProviderController::class, 'store'])
         ->name('provider.store');
 
-});
+    /*
+    |--------------------------------------------------------------------------
+    | FORUM
+    |--------------------------------------------------------------------------
+    */
 
-// Tentang
-Route::get('/about', function () {
-    return view('pages.about.index');
-})->name('about');
+    Route::prefix('forum')->group(function () {
 
-// Forum
-Route::prefix('forum')->group(function () {
-
-    Route::get('/', [ForumController::class, 'index'])
-        ->name('forum.index');
-
-    Route::middleware('auth')->group(function () {
-
-        // THREAD
-
+        // Thread
         Route::get('/create', [ForumController::class, 'create'])
             ->name('forum.create');
 
@@ -128,143 +174,124 @@ Route::prefix('forum')->group(function () {
         Route::delete('/{slug}', [ForumController::class, 'destroy'])
             ->name('forum.destroy');
 
-        // REPLIES
+        // Reply
+        Route::post('/{slug}/reply', [ForumReplyController::class, 'store'])
+            ->name('forum.reply.store');
 
-        Route::post(
-            '/{slug}/reply',
-            [ForumReplyController::class, 'store']
-        )->name('forum.reply.store');
+        Route::put('/reply/{reply}', [ForumReplyController::class, 'update'])
+            ->name('forum.reply.update');
 
-        Route::put(
-            '/reply/{reply}',
-            [ForumReplyController::class, 'update']
-        )->name('forum.reply.update');
-
-        Route::delete(
-            '/reply/{reply}',
-            [ForumReplyController::class, 'destroy']
-        )->name('forum.reply.destroy');
+        Route::delete('/reply/{reply}', [ForumReplyController::class, 'destroy'])
+            ->name('forum.reply.destroy');
 
     });
 
-    // SHOW HARUS PALING BAWAH
-    Route::get('/{slug}', [ForumController::class, 'show'])
-        ->name('forum.show');
+    /*
+    |--------------------------------------------------------------------------
+    | CART
+    |--------------------------------------------------------------------------
+    */
 
-});
+    Route::prefix('cart')->group(function () {
 
-// Contact
-// Route::get('/contact', function () {
-//     return view('pages.contact.index');
-// })->name('contact');
+        Route::get('/', [CartController::class, 'index'])
+            ->name('cart.index');
 
-// Profile Dashboard
-Route::middleware(['auth'])->prefix('dashboard')->group(function () {
+        Route::post('/{service}', [CartController::class, 'store'])
+            ->name('cart.store');
 
-    // PROFILE
-    Route::prefix('profile')->group(function () {
+        Route::delete('/item/{item}', [CartController::class, 'destroy'])
+            ->name('cart.destroy');
 
-        // halaman profile
-        Route::get('/', [DashboardProfileController::class, 'index'])
-            ->name('profile.index');
+    });
 
-        // update profile
-        Route::put('/update', [DashboardProfileController::class, 'update'])
-            ->name('profile.update');
+    /*
+    |--------------------------------------------------------------------------
+    | SAVED SERVICES
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('saved')->group(function () {
+
+        Route::get('/', [SavedServiceController::class, 'index'])
+            ->name('saved.index');
+
+        Route::post('/{service}', [SavedServiceController::class, 'store'])
+            ->name('saved.store');
+
+        Route::delete('/{service}', [SavedServiceController::class, 'destroy'])
+            ->name('saved.destroy');
+
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHAT
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('chat')->group(function () {
+
+        Route::get('/', [ConversationController::class, 'index'])
+            ->name('chat.index');
+
+        Route::get('/{conversation}', [ConversationController::class, 'show'])
+            ->name('chat.show');
+
+        Route::post('/start/{provider}', [ConversationController::class, 'store'])
+            ->name('chat.start');
+
+        Route::post('/{conversation}/message', [MessageController::class, 'store'])
+            ->name('chat.message.store');
 
     });
 
 });
 
-// Contact
-Route::prefix('contact')->group(function () {
+/*
+|--------------------------------------------------------------------------
+| SELLER
+|--------------------------------------------------------------------------
+*/
 
-    Route::get(
-        '/',
-        [ContactController::class, 'index']
-    )->name('contact.index');
-
-    Route::post(
-        '/',
-        [ContactController::class, 'store']
-    )->name('contact.store');
-
-});
-
-// Seller - Service
-Route::middleware(['auth'])
+Route::middleware(['auth', 'rolemanager:seller'])
     ->prefix('seller')
     ->group(function () {
 
-        Route::get('/services/create', [ServiceController::class, 'create'])
-            ->name('services.create');
+        Route::get('/dashboard', [SellerDashboardController::class, 'index'])
+            ->name('seller.dashboard');
 
-        Route::post('/services/store', [ServiceController::class, 'store'])
-            ->name('services.store');
+        Route::prefix('services')->group(function () {
 
-        Route::get(
-            '/services/{id}/edit',
-            [ServiceController::class, 'edit']
-        )->name('services.edit');
+            Route::get('/create', [ServiceController::class, 'create'])
+                ->name('services.create');
 
-        Route::put(
-            '/services/{id}',
-            [ServiceController::class, 'update']
-        )->name('services.update');
+            Route::post('/store', [ServiceController::class, 'store'])
+                ->name('services.store');
 
-        Route::delete(
-            '/services/{id}',
-            [ServiceController::class, 'destroy']
-        )->name('services.destroy');
+            Route::get('/{id}/edit', [ServiceController::class, 'edit'])
+                ->name('services.edit');
 
-    });
+            Route::put('/{id}', [ServiceController::class, 'update'])
+                ->name('services.update');
 
-// Cart
-Route::middleware('auth')
-    ->prefix('cart')
-    ->group(function () {
+            Route::delete('/{id}', [ServiceController::class, 'destroy'])
+                ->name('services.destroy');
 
-        Route::get(
-            '/',
-            [CartController::class, 'index']
-        )->name('cart.index');
-
-        Route::post(
-            '/{service}',
-            [CartController::class, 'store']
-        )->name('cart.store');
-
-        Route::delete(
-            '/item/{item}',
-            [CartController::class, 'destroy']
-        )->name('cart.destroy');
+        });
 
     });
 
-Route::middleware('auth')
-    ->prefix('chat')
-    ->group(function () {
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
 
-        Route::get(
-            '/',
-            [ConversationController::class, 'index']
-        )->name('chat.index');
-
-        Route::get(
-            '/{conversation}',
-            [ConversationController::class, 'show']
-        )->name('chat.show');
-
-        Route::post(
-            '/start/{provider}',
-            [ConversationController::class, 'store']
-        )->name('chat.start');
-
-        Route::post(
-            '/{conversation}/message',
-            [MessageController::class, 'store']
-        )->name('chat.message.store');
-
-    });
+Route::middleware(['auth', 'verified', 'rolemanager:admin'])
+    ->get('/admin/dashboard', function () {
+        return view('admin');
+    })
+    ->name('admin');
 
 require __DIR__ . '/auth.php';

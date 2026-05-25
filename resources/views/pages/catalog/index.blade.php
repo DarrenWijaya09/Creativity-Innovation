@@ -239,7 +239,37 @@
                     <!-- Service Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         @forelse($services as $service)
-                            <div class="group bg-white rounded-2xl hover:shadow-xl transition-all duration-300 hover-lift border border-gray-100 overflow-hidden">
+                            <div class="group bg-white rounded-2xl hover:shadow-xl transition-all duration-300 hover-lift border border-gray-100 overflow-hidden relative">
+                                <!-- Save/Bookmark Button -->
+                                @auth
+                                    @php
+                                        $isSaved = in_array($service->id, $savedServiceIds ?? []);
+                                    @endphp
+                                    @if($isSaved)
+                                        <form action="{{ route('saved.destroy', $service->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-sm hover:shadow-md flex items-center justify-center text-red-500 hover:text-red-600 transition-all duration-200 z-10">
+                                                <i class="fas fa-heart text-sm"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('saved.store', $service->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                class="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-sm hover:shadow-md flex items-center justify-center text-gray-400 hover:text-red-500 transition-all duration-200 z-10">
+                                                <i class="far fa-heart text-sm"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                @else
+                                    <a href="{{ route('login') }}"
+                                        class="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-sm hover:shadow-md flex items-center justify-center text-gray-400 hover:text-red-500 transition-all duration-200 z-10">
+                                        <i class="far fa-heart text-sm"></i>
+                                    </a>
+                                @endauth
+
                                 <a href="{{ route('catalog.show', $service->slug) }}">
                                     <div class="card-image-zoom relative">
                                         <img src="{{ $service->image ?? 'https://placehold.co/400x300/png?text=No+Image' }}"
