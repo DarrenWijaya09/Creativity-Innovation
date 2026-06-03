@@ -100,15 +100,15 @@ Route::prefix('contact')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('forum')->group(function () {
+// Route::prefix('forum')->group(function () {
 
-    Route::get('/', [ForumController::class, 'index'])
-        ->name('forum.index');
+//     Route::get('/', [ForumController::class, 'index'])
+//         ->name('forum.index');
 
-    Route::get('/{slug}', [ForumController::class, 'show'])
-        ->name('forum.show');
+//     Route::get('/{slug}', [ForumController::class, 'show'])
+//         ->name('forum.show');
 
-});
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -153,6 +153,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/become-provider', [ProviderController::class, 'store'])
         ->name('provider.store');
 
+
     /*
     |--------------------------------------------------------------------------
     | FORUM
@@ -161,28 +162,57 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('forum')->group(function () {
 
-        // Thread
-        Route::get('/create', [ForumController::class, 'create'])
-            ->name('forum.create');
+        Route::get(
+            '/',
+            [ForumController::class, 'index']
+        )->name('forum.index');
 
-        Route::post('/store', [ForumController::class, 'store'])
-            ->name('forum.store');
+        Route::middleware('auth')->group(function () {
 
-        Route::put('/{slug}', [ForumController::class, 'update'])
-            ->name('forum.update');
+            // THREAD
+            Route::get(
+                '/create',
+                [ForumController::class, 'create']
+            )->name('forum.create');
 
-        Route::delete('/{slug}', [ForumController::class, 'destroy'])
-            ->name('forum.destroy');
+            Route::post(
+                '/store',
+                [ForumController::class, 'store']
+            )->name('forum.store');
 
-        // Reply
-        Route::post('/{slug}/reply', [ForumReplyController::class, 'store'])
-            ->name('forum.reply.store');
+            Route::put(
+                '/{slug}',
+                [ForumController::class, 'update']
+            )->name('forum.update');
 
-        Route::put('/reply/{reply}', [ForumReplyController::class, 'update'])
-            ->name('forum.reply.update');
+            Route::delete(
+                '/{slug}',
+                [ForumController::class, 'destroy']
+            )->name('forum.destroy');
 
-        Route::delete('/reply/{reply}', [ForumReplyController::class, 'destroy'])
-            ->name('forum.reply.destroy');
+            // REPLY
+            Route::post(
+                '/{slug}/reply',
+                [ForumReplyController::class, 'store']
+            )->name('forum.reply.store');
+
+            Route::put(
+                '/reply/{reply}',
+                [ForumReplyController::class, 'update']
+            )->name('forum.reply.update');
+
+            Route::delete(
+                '/reply/{reply}',
+                [ForumReplyController::class, 'destroy']
+            )->name('forum.reply.destroy');
+
+        });
+
+        // HARUS PALING BAWAH
+        Route::get(
+            '/{slug}',
+            [ForumController::class, 'show']
+        )->name('forum.show');
 
     });
 
@@ -229,7 +259,6 @@ Route::middleware('auth')->group(function () {
     | CHAT
     |--------------------------------------------------------------------------
     */
-
     Route::prefix('chat')->group(function () {
 
         Route::get('/', [ConversationController::class, 'index'])
@@ -241,8 +270,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/start/{provider}', [ConversationController::class, 'store'])
             ->name('chat.start');
 
-        Route::post('/{conversation}/message', [MessageController::class, 'store'])
-            ->name('chat.message.store');
+        Route::get('/{conversation}/messages', [MessageController::class, 'index'])
+            ->name('chat.messages.index');
+
+        Route::post('/{conversation}/messages', [MessageController::class, 'store'])
+            ->name('chat.messages.store');
+
+        Route::post('/{conversation}/read', [MessageController::class, 'markAsRead'])
+            ->name('chat.messages.read');
 
     });
 

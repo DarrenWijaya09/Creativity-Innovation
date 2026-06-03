@@ -57,4 +57,6 @@ class Conversation extends Model
             Message::class
         )->latestOfMany();
     }
+
+
 }

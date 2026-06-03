@@ -1,128 +1,43 @@
 <?php
-
 namespace App\Http\Controllers\Chat;
-
 use App\Models\User;
-use App\Models\Service;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-
 class ConversationController extends Controller
 {
     public function index()
     {
-        $conversations = Conversation::query()
-            ->with([
-                'buyer',
-                'seller',
-                'service',
-                'lastMessage.sender',
-            ])
-            ->where(function ($query) {
-
-                $query
-                    ->where('buyer_id', Auth::id())
-                    ->orWhere('seller_id', Auth::id());
-
-            })
-            ->latest()
-            ->get();
-
-        return view(
-            'pages.chat.index',
-            compact(
-                'conversations'
-            )
-        );
-    }
-
+        $conversations = Conversation::query()->with(['buyer', 'seller', 'service', 'lastMessage.sender',])->where(function ($query) {
+            $query->where('buyer_id', Auth::id())->orWhere('seller_id', Auth::id()); })->latest()->get();
+        return view('pages.chat.index', compact('conversations'));
+    } /** * Fallback full-page conversation * (masih dipertahankan untuk debugging) */
     public function show(Conversation $conversation)
     {
-        // AUTHORIZATION
-        abort_if(
-            Auth::id() !== $conversation->buyer_id &&
-            Auth::id() !== $conversation->seller_id,
-            403
-        );
-
-        // LOAD RELATIONS
-        $conversation->load([
-            'buyer',
-            'seller',
-            'service',
-        ]);
-
-        // LOAD MESSAGES
-        $messages = $conversation->messages()
-            ->with([
-                'sender',
-            ])
-            ->latest()
-            ->get()
-            ->reverse();
-
-        // SIDEBAR CONVERSATIONS
-        $conversations = Conversation::query()
-            ->with([
-                'buyer',
-                'seller',
-                'service',
-                'lastMessage.sender',
-            ])
-            ->where(function ($query) {
-
-                $query
-                    ->where('buyer_id', Auth::id())
-                    ->orWhere('seller_id', Auth::id());
-
-            })
-            ->latest()
-            ->get();
-
-        return view(
-            'pages.chat.show',
-            compact(
-                'conversation',
-                'messages',
-                'conversations'
-            )
-        );
+        $this->authorizeConversation($conversation);
+        $conversation->load(['buyer', 'seller', 'service',]);
+        $messages = $conversation->messages()->with('sender')->orderBy('created_at')->get();
+        $conversations = Conversation::query()->with(['buyer', 'seller', 'service', 'lastMessage.sender',])->where(function ($query) {
+            $query->where('buyer_id', Auth::id())->orWhere('seller_id', Auth::id()); })->latest()->get();
+        return view('pages.chat.index', ['conversations' => $conversations, 'activeConversation' => $conversation, 'messages' => $messages,]);
+    } /** * AJAX endpoint * GET /chat/{conversation}/data */
+    public function data(Conversation $conversation)
+    {
+        $this->authorizeConversation($conversation);
+        $conversation->load(['buyer', 'seller', 'service',]);
+        $messages = $conversation->messages()->with('sender')->orderBy('created_at')->get();
+        return response()->json(['success' => true, 'conversation' => ['id' => $conversation->id, 'buyer_id' => $conversation->buyer_id, 'seller_id' => $conversation->seller_id, 'service_id' => $conversation->service_id, 'created_at' => $conversation->created_at,], 'buyer' => $conversation->buyer, 'seller' => $conversation->seller, 'service' => $conversation->service, 'messages' => $messages,]);
     }
-
     public function store(Request $request, User $provider)
     {
-        // PREVENT SELF CHAT
-        abort_if(
-            Auth::id() === $provider->id,
-            403
-        );
-
-        $serviceId = $request->service_id;
-
-        // CHECK EXISTING CONVERSATION
-        $conversation = Conversation::query()
-            ->where('buyer_id', Auth::id())
-            ->where('seller_id', $provider->id)
-            ->where('service_id', $serviceId)
-            ->first();
-
-        // CREATE IF NOT EXISTS
-        if (!$conversation) {
-
-            $conversation = Conversation::create([
-                'buyer_id' => Auth::id(),
-                'seller_id' => $provider->id,
-                'service_id' => $serviceId,
-            ]);
-
-        }
-
-        return redirect()
-            ->route(
-                'chat.show',
-                $conversation->id
-            );
+        abort_if(Auth::id() === $provider->id, 403, 'You cannot start a conversation with yourself.');
+        $validated = $request->validate(['service_id' => ['nullable', 'exists:services,id',],]);
+        $conversation = Conversation::firstOrCreate(['buyer_id' => Auth::id(), 'seller_id' => $provider->id, 'service_id' => $validated['service_id'] ?? null,]);
+        return response()->json(['success' => true, 'conversation_id' => $conversation->id, 'conversation' => ['id' => $conversation->id, 'buyer_id' => $conversation->buyer_id, 'seller_id' => $conversation->seller_id, 'service_id' => $conversation->service_id,],]);
+    } /** * Reusable authorization helper */
+    private function authorizeConversation(Conversation $conversation): void
+    {
+        abort_if(Auth::id() !== $conversation->buyer_id && Auth::id() !== $conversation->seller_id, 403);
     }
 }

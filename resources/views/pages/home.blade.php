@@ -8,7 +8,7 @@
 
 @section('content')
     <!-- ==================== HERO SECTION ==================== -->
-    <section class="relative overflow-hidden bg-white dark:bg-gray-950 transition-theme">
+    <section class="relative overflow-hidden bg-white dark:bg-gray-950">
         <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-400/15 dark:bg-blue-500/5 rounded-full blur-[120px] -z-10"></div>
         <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-400/10 dark:bg-indigo-500/5 rounded-full blur-[100px] -z-10"></div>
 
@@ -21,7 +21,7 @@
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                         </span>
-                        <span class="text-xs font-medium text-primary">Platform Jasa Terpercaya</span>
+                        <span class="text-xs font-medium text-primary dark:text-primary">Platform Jasa Terpercaya</span>
                     </div>
 
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-gray-900 dark:text-white leading-[1.15] mb-6">
@@ -36,12 +36,12 @@
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
                         <a href="{{ url('/catalog') }}"
-                           class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                           class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3.5 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5">
                             <span>Cari Jasa Sekarang</span>
                             <i class="fas fa-arrow-right text-sm"></i>
                         </a>
                         <a href="{{ route('provider.create') }}"
-                           class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-8 py-3.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md">
+                           class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-8 py-3.5 rounded-full shadow-sm hover:shadow-md">
                             <span>Jadi Penyedia</span>
                         </a>
                     </div>
@@ -84,10 +84,10 @@
                         <div class="relative rounded-3xl overflow-hidden shadow-2xl">
                             <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&h=600&fit=crop"
                                  alt="Layanan profesional"
-                                 class="w-full h-auto object-contain relative z-0 transform transition-transform duration-500 hover:scale-105 dark:brightness-95">
+                                 class="w-full h-auto object-contain relative z-0 transform transition-transform duration-500 hover:scale-105 dark:brightness-[0.92]">
                         </div>
 
-                        <div class="absolute -bottom-3 -right-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-lg border border-gray-100 dark:border-gray-800 flex items-center gap-2">
+                        <div class="absolute -bottom-3 -right-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-lg border border-gray-100 dark:border-gray-700 flex items-center gap-2">
                             <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                                 <i class="fas fa-check-circle text-primary text-sm"></i>
                             </div>
@@ -103,7 +103,7 @@
     </section>
 
     <!-- ==================== CATEGORY SHORTCUTS ==================== -->
-    <section class="py-12 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 transition-theme">
+    <section class="py-12 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-8">
                 <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">Jelajahi Kategori</h2>
@@ -128,7 +128,7 @@
                     @endphp
                     @foreach($categories as $category)
                         <a href="{{ route('catalog.index', ['category[]' => $category]) }}"
-                           class="category-pill flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                           class="category-pill flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white hover:border-primary shadow-sm hover:shadow-md dark:hover:shadow-black/30 hover:-translate-y-0.5">
                             <i class="{{ $categoryIcons[$category] ?? 'fas fa-tag' }} text-sm"></i>
                             <span>{{ $category }}</span>
                         </a>
@@ -139,7 +139,7 @@
     </section>
 
     <!-- ==================== POPULAR SERVICES ==================== -->
-    <section class="py-16 bg-gray-50 dark:bg-gray-900 transition-theme">
+    <section class="py-16 bg-white dark:bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-end justify-between flex-wrap mb-10">
                 <div>
@@ -151,7 +151,7 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($popularServices as $service)
-                    <div class="group bg-white dark:bg-gray-950 rounded-2xl hover:shadow-xl dark:hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1 border border-gray-100 dark:border-gray-800 overflow-hidden relative">
+                    <div class="group bg-white dark:bg-slate-900 rounded-2xl hover:shadow-xl dark:hover:shadow-black/40 hover:-translate-y-1 border border-gray-100 dark:border-slate-700 overflow-hidden relative">
                         @auth
                             @php
                                 $isSaved = in_array($service->id, $savedServiceIds ?? []);
@@ -183,10 +183,10 @@
                         <a href="{{ route('catalog.show', $service->slug) }}" class="block">
                             <div class="card-image-zoom">
                                 <img src="{{ $service->image ? (Str::startsWith($service->image, 'http') ? $service->image : asset('storage/' . $service->image)) : 'https://placehold.co/400x300/png?text=No+Image' }}"
-                                    alt="{{ $service->title }}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500 dark:brightness-95">
+                                    alt="{{ $service->title }}" class="w-full h-48 object-cover group-hover:scale-105 dark:brightness-[0.92]">
                             </div>
                             <div class="p-5">
-                                <h3 class="font-bold text-gray-900 dark:text-white text-lg line-clamp-1 group-hover:text-primary transition">{{ $service->title }}</h3>
+                                <h3 class="font-bold text-gray-900 dark:text-white text-lg line-clamp-1 group-hover:text-primary transition-colors">{{ $service->title }}</h3>
                                 <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ optional($service->provider)->name ?? 'Penyedia' }}</p>
                                 <div class="flex items-center gap-2 mt-2">
                                     <div class="flex items-center gap-1">
@@ -199,7 +199,7 @@
                                     <span class="text-xl font-bold text-primary">Rp{{ number_format($service->price, 0, ',', '.') }}</span>
                                     <span class="text-xs text-gray-400 dark:text-gray-500 ml-1">/ sesi</span>
                                 </div>
-                                <div class="mt-4 block text-center text-primary text-sm font-medium border border-primary/30 rounded-full py-2 hover:bg-primary hover:text-white transition group-hover:shadow-md">
+                                <div class="mt-4 block text-center text-primary text-sm font-medium border border-primary/30 rounded-full py-2 hover:bg-primary hover:text-white transition-colors group-hover:shadow-md">
                                     Pesan Layanan
                                 </div>
                             </div>
@@ -207,17 +207,17 @@
                     </div>
                 @empty
                     @foreach(range(1, 4) as $i)
-                        <div class="bg-white dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse">
-                            <div class="w-full h-48 bg-gray-200 dark:bg-gray-800"></div>
+                        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden animate-pulse">
+                            <div class="w-full h-48 bg-gray-200 dark:bg-slate-800"></div>
                             <div class="p-5">
-                                <div class="h-5 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mb-2"></div>
-                                <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mb-3"></div>
+                                <div class="h-5 bg-gray-200 dark:bg-slate-800 rounded w-3/4 mb-2"></div>
+                                <div class="h-4 bg-gray-200 dark:bg-slate-800 rounded w-1/2 mb-3"></div>
                                 <div class="flex gap-2 mb-3">
-                                    <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-16"></div>
-                                    <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-20"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-slate-800 rounded w-16"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-slate-800 rounded w-20"></div>
                                 </div>
-                                <div class="h-6 bg-gray-200 dark:bg-gray-800 rounded w-24 mb-4"></div>
-                                <div class="h-10 bg-gray-200 dark:bg-gray-800 rounded-full w-full"></div>
+                                <div class="h-6 bg-gray-200 dark:bg-slate-800 rounded w-24 mb-4"></div>
+                                <div class="h-10 bg-gray-200 dark:bg-slate-800 rounded-full w-full"></div>
                             </div>
                         </div>
                     @endforeach
@@ -227,43 +227,43 @@
     </section>
 
     <!-- PROMO BANNER -->
-    <section class="py-12 bg-white dark:bg-gray-950 transition-theme">
+    <section class="py-12 bg-white dark:bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-gray-50 dark:bg-gray-900 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-10 border border-gray-100 dark:border-gray-800 shadow-sm transition-theme">
+            <div class="bg-gray-50 dark:bg-gradient-to-r dark:from-slate-900 dark:to-gray-900 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-10 border border-gray-100 dark:border-slate-700 shadow-sm">
                 <div class="flex-1 text-center md:text-left space-y-4">
                     <h3 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Temukan Jasa Berkualitas<br>dengan Harga Terjangkau</h3>
                     <p class="text-gray-600 dark:text-gray-400 max-w-sm mx-auto md:mx-0">Dapatkan penawaran terbaik dari penyedia jasa terpercaya di berbagai bidang.</p>
                     <div class="flex justify-center md:justify-start gap-3 pt-2">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-gray-700">
+                        <div class="bg-white dark:bg-slate-900 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-slate-700">
                             <span class="text-2xl font-bold text-primary" id="days">00</span>
                             <p class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Hari</p>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-gray-700">
+                        <div class="bg-white dark:bg-slate-900 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-slate-700">
                             <span class="text-2xl font-bold text-primary" id="hours">00</span>
                             <p class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Jam</p>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-gray-700">
+                        <div class="bg-white dark:bg-slate-900 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-slate-700">
                             <span class="text-2xl font-bold text-primary" id="minutes">00</span>
                             <p class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Menit</p>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-gray-700">
+                        <div class="bg-white dark:bg-slate-900 rounded-xl px-4 py-2 shadow-sm text-center min-w-[60px] border border-gray-100 dark:border-slate-700">
                             <span class="text-2xl font-bold text-primary" id="seconds">00</span>
                             <p class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Detik</p>
                         </div>
                     </div>
-                    <a href="{{ url('/catalog') }}" class="inline-block bg-primary text-white px-7 py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition shadow-sm mt-2">Lihat Semua Jasa →</a>
+                    <a href="{{ url('/catalog') }}" class="inline-block bg-primary text-white px-7 py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm mt-2">Lihat Semua Jasa →</a>
                 </div>
                 <div class="flex-1 flex justify-center md:justify-end">
                     <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop"
                         alt="Penyedia jasa"
-                        class="w-56 md:w-64 object-contain drop-shadow-md rounded-2xl hover:scale-105 transition duration-500 dark:brightness-95">
+                        class="w-56 md:w-64 object-contain drop-shadow-md rounded-2xl hover:scale-105 transition duration-500 dark:brightness-[0.92]">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- RECOMMENDED SERVICES -->
-    <section class="py-16 bg-gray-50 dark:bg-gray-900 transition-theme">
+    <section class="py-16 bg-white dark:bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-end justify-between flex-wrap mb-10">
                 <div>
@@ -274,7 +274,7 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($recommendedServices as $service)
-                    <div class="group bg-white dark:bg-gray-950 rounded-2xl hover:shadow-xl dark:hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1 border border-gray-100 dark:border-gray-800 overflow-hidden relative">
+                    <div class="group bg-white dark:bg-slate-900 rounded-2xl hover:shadow-xl dark:hover:shadow-black/40 hover:-translate-y-1 border border-gray-100 dark:border-slate-700 overflow-hidden relative">
                         @auth
                             @php
                                 $isSaved = in_array($service->id, $savedServiceIds ?? []);
@@ -306,10 +306,10 @@
                         <a href="{{ route('catalog.show', $service->slug) }}" class="block">
                             <div class="card-image-zoom">
                                 <img src="{{ $service->image ? (Str::startsWith($service->image, 'http') ? $service->image : asset('storage/' . $service->image)) : 'https://placehold.co/400x300/png?text=No+Image' }}"
-                                    alt="{{ $service->title }}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500 dark:brightness-95">
+                                    alt="{{ $service->title }}" class="w-full h-48 object-cover group-hover:scale-105 dark:brightness-[0.92]">
                             </div>
                             <div class="p-5">
-                                <h3 class="font-bold text-gray-900 dark:text-white text-lg line-clamp-1 group-hover:text-primary transition">{{ $service->title }}</h3>
+                                <h3 class="font-bold text-gray-900 dark:text-white text-lg line-clamp-1 group-hover:text-primary transition-colors">{{ $service->title }}</h3>
                                 <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ optional($service->provider)->name ?? 'Penyedia' }}</p>
                                 <div class="flex items-center gap-2 mt-2">
                                     <div class="flex items-center gap-1">
@@ -322,7 +322,7 @@
                                     <span class="text-xl font-bold text-primary">Rp{{ number_format($service->price, 0, ',', '.') }}</span>
                                     <span class="text-xs text-gray-400 dark:text-gray-500 ml-1">/ sesi</span>
                                 </div>
-                                <div class="mt-4 block text-center text-primary text-sm font-medium border border-primary/30 rounded-full py-2 hover:bg-primary hover:text-white transition group-hover:shadow-md">
+                                <div class="mt-4 block text-center text-primary text-sm font-medium border border-primary/30 rounded-full py-2 hover:bg-primary hover:text-white transition-colors group-hover:shadow-md">
                                     Pesan Layanan
                                 </div>
                             </div>
@@ -330,17 +330,17 @@
                     </div>
                 @empty
                     @foreach(range(1, 4) as $i)
-                        <div class="bg-white dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse">
-                            <div class="w-full h-48 bg-gray-200 dark:bg-gray-800"></div>
+                        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden animate-pulse">
+                            <div class="w-full h-48 bg-gray-200 dark:bg-slate-800"></div>
                             <div class="p-5">
-                                <div class="h-5 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mb-2"></div>
-                                <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mb-3"></div>
+                                <div class="h-5 bg-gray-200 dark:bg-slate-800 rounded w-3/4 mb-2"></div>
+                                <div class="h-4 bg-gray-200 dark:bg-slate-800 rounded w-1/2 mb-3"></div>
                                 <div class="flex gap-2 mb-3">
-                                    <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-16"></div>
-                                    <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-20"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-slate-800 rounded w-16"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-slate-800 rounded w-20"></div>
                                 </div>
-                                <div class="h-6 bg-gray-200 dark:bg-gray-800 rounded w-24 mb-4"></div>
-                                <div class="h-10 bg-gray-200 dark:bg-gray-800 rounded-full w-full"></div>
+                                <div class="h-6 bg-gray-200 dark:bg-slate-800 rounded w-24 mb-4"></div>
+                                <div class="h-10 bg-gray-200 dark:bg-slate-800 rounded-full w-full"></div>
                             </div>
                         </div>
                     @endforeach
@@ -350,7 +350,7 @@
     </section>
 
     <!-- TESTIMONIALS -->
-    <section class="py-16 bg-white dark:bg-gray-950 transition-theme">
+    <section class="py-16 bg-white dark:bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">Apa Kata Pengguna</h2>
@@ -365,9 +365,9 @@
                     ];
                 @endphp
                 @foreach ($testimonials as $t)
-                    <div class="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-gray-100 dark:border-gray-800">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-md border border-gray-100 dark:border-slate-700">
                         <div class="flex items-center gap-4 mb-4">
-                            <img src="{{ $t['avatar'] }}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 dark:brightness-95">
+                            <img src="{{ $t['avatar'] }}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 dark:brightness-[0.92]">
                             <div>
                                 <h4 class="font-bold text-gray-800 dark:text-white">{{ $t['name'] }}</h4>
                                 <div class="flex items-center gap-1 mt-1">
@@ -389,7 +389,7 @@
     </section>
 
     <!-- HOW IT WORKS -->
-    <section class="py-16 bg-gray-50 dark:bg-gray-900 transition-theme">
+    <section class="py-16 bg-white dark:bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">Cara Kerja VEXORA</h2>
@@ -406,10 +406,10 @@
                 @foreach ($steps as $step)
                     <div class="text-center group">
                         <div class="relative inline-block mb-6">
-                            <div class="w-24 h-24 bg-secondary dark:bg-primary/10 rounded-2xl flex items-center justify-center mx-auto group-hover:bg-primary/10 transition">
+                            <div class="w-24 h-24 bg-secondary dark:bg-primary/10 rounded-2xl flex items-center justify-center mx-auto group-hover:bg-primary/10 transition-colors">
                                 <i class="{{ $step['icon'] }} text-3xl text-primary"></i>
                             </div>
-                            <span class="absolute -top-3 -right-3 bg-white dark:bg-gray-900 text-primary font-bold text-sm w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center shadow-sm">{{ $step['number'] }}</span>
+                            <span class="absolute -top-3 -right-3 bg-white dark:bg-slate-900 text-primary font-bold text-sm w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center shadow-sm">{{ $step['number'] }}</span>
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">{{ $step['title'] }}</h3>
                         <p class="text-gray-500 dark:text-gray-400 max-w-xs mx-auto">{{ $step['desc'] }}</p>
@@ -420,7 +420,7 @@
     </section>
 
     <!-- STATISTICS -->
-    <section class="py-16 bg-primary/5 dark:bg-primary/10 transition-theme">
+    <section class="py-16 bg-primary/5 dark:bg-primary/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
                 @php
@@ -433,7 +433,7 @@
                 @endphp
                 @foreach ($stats as $stat)
                     <div class="p-6">
-                        <div class="w-14 h-14 bg-white dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                        <div class="w-14 h-14 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                             <i class="{{ $stat['icon'] }} text-primary text-xl"></i>
                         </div>
                         <div class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">{{ $stat['value'] }}</div>
@@ -445,19 +445,19 @@
     </section>
 
     <!-- CTA SECTION -->
-    <section class="py-16 bg-white dark:bg-gray-950 transition-theme">
+    <section class="py-16 bg-white dark:bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-gradient-to-r from-primary to-blue-600 rounded-3xl p-12 md:p-16 text-center text-white shadow-xl dark:shadow-black/30">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Siap Menemukan Jasa Terbaik?</h2>
                 <p class="text-blue-100 text-lg max-w-xl mx-auto mb-8">Mulai sekarang dan temukan layanan terpercaya hanya di VEXORA.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ url('/catalog') }}" class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-md hover:shadow-lg hover:-translate-y-0.5">Cari Jasa</a>
+                    <a href="{{ url('/catalog') }}" class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-colors shadow-md hover:shadow-lg hover:-translate-y-0.5">Cari Jasa</a>
                     @guest
-                        <a href="{{ route('login') }}" class="inline-block bg-primary/20 border border-white/40 text-white font-semibold px-8 py-3 rounded-full hover:bg-white/10 transition hover:-translate-y-0.5">Jadi Penyedia</a>
+                        <a href="{{ route('login') }}" class="inline-block bg-primary/20 border border-white/40 text-white font-semibold px-8 py-3 rounded-full hover:bg-white/10 transition-colors hover:-translate-y-0.5">Jadi Penyedia</a>
                     @endguest
                     @auth
                         @if (auth()->user()->role != 1)
-                            <a href="{{ route('provider.create') }}" class="inline-block bg-primary/20 border border-white/40 text-white font-semibold px-8 py-3 rounded-full hover:bg-white/10 transition hover:-translate-y-0.5">Jadi Penyedia</a>
+                            <a href="{{ route('provider.create') }}" class="inline-block bg-primary/20 border border-white/40 text-white font-semibold px-8 py-3 rounded-full hover:bg-white/10 transition-colors hover:-translate-y-0.5">Jadi Penyedia</a>
                         @endif
                     @endauth
                 </div>

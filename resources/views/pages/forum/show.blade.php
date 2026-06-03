@@ -2,15 +2,15 @@
     use Illuminate\Support\Str;
 
     $categoryColors = [
-        'blue' => 'bg-blue-100 text-blue-700',
-        'purple' => 'bg-purple-100 text-purple-700',
-        'pink' => 'bg-pink-100 text-pink-700',
-        'emerald' => 'bg-emerald-100 text-emerald-700',
-        'orange' => 'bg-orange-100 text-orange-700',
-        'cyan' => 'bg-cyan-100 text-cyan-700',
-        'red' => 'bg-red-100 text-red-700',
-        'amber' => 'bg-amber-100 text-amber-700',
-        'indigo' => 'bg-indigo-100 text-indigo-700',
+        'blue' => 'bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300',
+        'purple' => 'bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300',
+        'pink' => 'bg-pink-100 text-pink-700 dark:bg-pink-950/30 dark:text-pink-300',
+        'emerald' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300',
+        'orange' => 'bg-orange-100 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300',
+        'cyan' => 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/30 dark:text-cyan-300',
+        'red' => 'bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-300',
+        'amber' => 'bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300',
+        'indigo' => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-300',
     ];
 
     function getInitials($name)
@@ -36,36 +36,36 @@
         <!-- Back Button -->
         <div class="mb-8">
             <a href="{{ route('forum.index') }}"
-                class="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition text-sm">
+                class="inline-flex items-center gap-2 text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary transition text-sm">
                 <i class="fas fa-arrow-left text-xs"></i>
                 <span>Kembali ke Forum</span>
             </a>
         </div>
 
         <!-- Thread Content -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm mb-8 overflow-hidden" id="threadContainer">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm mb-8 overflow-hidden" id="threadContainer">
             <!-- Display Mode -->
             <div id="threadDisplayMode" class="p-6 sm:p-8">
                 <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
                     <div class="space-y-3">
                         <div class="flex items-center gap-2">
                             <span
-                                class="px-2.5 py-1 rounded-full text-xs font-medium {{ $categoryColors[$thread->category?->color] ?? 'bg-gray-100 text-gray-700' }}">
+                                class="px-2.5 py-1 rounded-full text-xs font-medium {{ $categoryColors[$thread->category?->color] ?? 'bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300' }}">
                                 {{ $thread->category?->name ?? 'Umum' }}
                             </span>
-                            <span class="text-xs text-gray-400 flex items-center gap-1">
+                            <span class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                                 <i class="far fa-clock text-xs"></i>
                                 {{ $thread->created_at->diffForHumans() }}
                             </span>
                         </div>
                         <h1 id="threadTitle"
-                            class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
+                            class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight">
                             {{ $thread->title }}
                         </h1>
                     </div>
                     <div class="flex items-center gap-2">
                         <button
-                            class="upvote-btn group flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-primary/5 rounded-xl text-sm text-gray-500 hover:text-primary transition-all duration-200 disabled:opacity-50"
+                            class="upvote-btn group flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-slate-800 hover:bg-primary/5 dark:hover:bg-primary/10 rounded-xl text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-all duration-200 disabled:opacity-50"
                             data-thread-id="{{ $thread->id }}" data-type="thread">
                             <i class="fas fa-arrow-up text-xs group-hover:-translate-y-0.5 transition-transform"></i>
                             <span class="upvote-count font-medium">{{ number_format($thread->upvotes_count) }}</span>
@@ -73,13 +73,13 @@
 
                         @if ($thread->isOwner())
                             <button id="editThreadBtn"
-                                class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-blue-50 rounded-xl text-sm text-gray-500 hover:text-blue-600 transition">
+                                class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-xl text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition">
                                 <i class="fas fa-pen text-xs"></i>
                                 <span>Edit</span>
                             </button>
 
                             <button id="deleteThreadBtn"
-                                class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-red-50 rounded-xl text-sm text-gray-500 hover:text-red-600 transition"
+                                class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition"
                                 data-delete-url="{{ route('forum.destroy', $thread->slug) }}">
                                 <i class="fas fa-trash text-xs"></i>
                                 <span>Hapus</span>
@@ -88,9 +88,9 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 py-5 border-y border-gray-100 mb-6">
+                <div class="flex items-center gap-3 py-5 border-y border-gray-100 dark:border-slate-700 mb-6">
                     <div
-                        class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/10 to-blue-100 flex items-center justify-center text-primary font-semibold text-sm overflow-hidden flex-shrink-0">
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/10 to-blue-100 dark:from-primary/20 dark:to-blue-900/30 flex items-center justify-center text-primary font-semibold text-sm overflow-hidden flex-shrink-0">
                         @if ($thread->user && $thread->user->avatar)
                             @if (filter_var($thread->user->avatar, FILTER_VALIDATE_URL))
                                 <img src="{{ $thread->user->avatar }}" class="w-full h-full object-cover">
@@ -103,8 +103,8 @@
                         @endif
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-900 text-sm">{{ $thread->user->name ?? 'Pengguna' }}</p>
-                        <p class="text-xs text-gray-400">
+                        <p class="font-semibold text-gray-900 dark:text-white text-sm">{{ $thread->user->name ?? 'Pengguna' }}</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500">
                             @if ($thread->user && $thread->user->created_at)
                                 Bergabung {{ $thread->user->created_at->format('M Y') }}
                             @else
@@ -114,7 +114,7 @@
                     </div>
                 </div>
 
-                <div id="threadContent" class="markdown-body prose prose-gray max-w-none">
+                <div id="threadContent" class="markdown-body prose prose-gray dark:prose-invert max-w-none">
                     {!! Str::markdown($thread->content) !!}
                 </div>
             </div>
@@ -127,19 +127,19 @@
 
                     <div class="space-y-5">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                 Judul Diskusi <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="title" value="{{ old('title', $thread->title) }}" required
-                                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent">
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent dark:bg-slate-900 dark:text-white dark:placeholder-gray-500">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                 Kategori <span class="text-red-500">*</span>
                             </label>
                             <select name="category_id" required
-                                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white">
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white dark:bg-slate-900 dark:text-white">
                                 <option value="">Pilih kategori</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}"
@@ -151,21 +151,21 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                 Isi Diskusi <span class="text-red-500">*</span>
                             </label>
                             <textarea name="content" rows="8" required
-                                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 resize-y">{{ old('content', $thread->content) }}</textarea>
-                            <p class="text-xs text-gray-400 mt-1">Minimal 20 karakter. Mendukung Markdown.</p>
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 resize-y dark:bg-slate-900 dark:text-white dark:placeholder-gray-500">{{ old('content', $thread->content) }}</textarea>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Minimal 20 karakter. Mendukung Markdown.</p>
                         </div>
 
-                        <div class="flex gap-3 pt-3 border-t border-gray-100">
+                        <div class="flex gap-3 pt-3 border-t border-gray-100 dark:border-slate-700">
                             <button type="submit"
                                 class="bg-primary hover:bg-primary/90 text-white font-medium px-5 py-2 rounded-xl transition shadow-sm">
                                 <i class="fas fa-save mr-1.5 text-xs"></i> Simpan Perubahan
                             </button>
                             <button type="button" id="cancelEditBtn"
-                                class="px-5 py-2 border border-gray-300 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition">
+                                class="px-5 py-2 border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 transition">
                                 Batal
                             </button>
                         </div>
@@ -177,30 +177,30 @@
         <!-- Reply List Section -->
         <div class="mb-8">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-                <h3 class="text-lg font-semibold text-gray-900">{{ number_format($thread->replies_count) }} Balasan</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ number_format($thread->replies_count) }} Balasan</h3>
                 <div class="flex items-center gap-3 text-xs">
                     <button
-                        class="reply-sort-btn text-gray-500 hover:text-primary transition {{ request('sort') == 'latest' || !request('sort') ? 'text-primary font-medium' : '' }}"
+                        class="reply-sort-btn text-gray-500 dark:text-gray-400 hover:text-primary transition {{ request('sort') == 'latest' || !request('sort') ? 'text-primary font-medium' : '' }}"
                         data-sort="latest">Terbaru</button>
-                    <span class="text-gray-300">•</span>
+                    <span class="text-gray-300 dark:text-slate-700">•</span>
                     <button
-                        class="reply-sort-btn text-gray-500 hover:text-primary transition {{ request('sort') == 'oldest' ? 'text-primary font-medium' : '' }}"
+                        class="reply-sort-btn text-gray-500 dark:text-gray-400 hover:text-primary transition {{ request('sort') == 'oldest' ? 'text-primary font-medium' : '' }}"
                         data-sort="oldest">Terlama</button>
-                    <span class="text-gray-300">•</span>
+                    <span class="text-gray-300 dark:text-slate-700">•</span>
                     <button
-                        class="reply-sort-btn text-gray-500 hover:text-primary transition {{ request('sort') == 'popular' ? 'text-primary font-medium' : '' }}"
+                        class="reply-sort-btn text-gray-500 dark:text-gray-400 hover:text-primary transition {{ request('sort') == 'popular' ? 'text-primary font-medium' : '' }}"
                         data-sort="popular">Terpopuler</button>
                 </div>
             </div>
 
             <div id="replies-container" class="space-y-5">
                 @forelse($replies as $reply)
-                    <div class="reply-card bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-all duration-200"
+                    <div class="reply-card bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-gray-200 dark:hover:border-slate-600 transition-all duration-200"
                         data-reply-id="{{ $reply->id }}" data-original-content="{{ e($reply->content) }}">
                         <div class="p-5 sm:p-6">
                             <div class="flex gap-3">
                                 <div
-                                    class="w-9 h-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-500 font-semibold text-xs overflow-hidden flex-shrink-0 mt-0.5">
+                                    class="w-9 h-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-gray-500 dark:text-gray-400 font-semibold text-xs overflow-hidden flex-shrink-0 mt-0.5">
                                     @if ($reply->user && $reply->user->avatar)
                                         @if (filter_var($reply->user->avatar, FILTER_VALIDATE_URL))
                                             <img src="{{ $reply->user->avatar }}" class="w-full h-full object-cover">
@@ -215,39 +215,38 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="reply-author font-semibold text-gray-900 text-sm">
+                                            <span class="reply-author font-semibold text-gray-900 dark:text-white text-sm">
                                                 {{ $reply->user->name ?? 'Pengguna' }}
                                             </span>
-                                            <span
-                                                class="text-xs text-gray-400">{{ $reply->created_at->diffForHumans() }}</span>
+                                            <span class="text-xs text-gray-400 dark:text-gray-500">{{ $reply->created_at->diffForHumans() }}</span>
                                             @if ($reply->is_solution)
                                                 <span
-                                                    class="inline-flex items-center gap-1 text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                                                    class="inline-flex items-center gap-1 text-xs bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
                                                     <i class="fas fa-check-circle text-xs"></i> Best Solution
                                                 </span>
                                             @endif
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <button
-                                                class="reply-upvote group flex items-center gap-1 text-xs text-gray-400 hover:text-primary transition disabled:opacity-50"
+                                                class="reply-upvote group flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-primary transition disabled:opacity-50"
                                                 data-reply-id="{{ $reply->id }}">
                                                 <i
                                                     class="fas fa-arrow-up text-xs group-hover:-translate-y-0.5 transition-transform"></i>
                                                 <span
                                                     class="upvote-count font-medium">{{ number_format($reply->upvotes_count) }}</span>
                                             </button>
-                                            <button class="reply-quote text-xs text-gray-400 hover:text-primary transition"
+                                            <button class="reply-quote text-xs text-gray-400 dark:text-gray-500 hover:text-primary transition"
                                                 data-reply-id="{{ $reply->id }}">
                                                 <i class="fas fa-reply mr-1"></i> Balas
                                             </button>
                                             @if ($reply->isOwner())
                                                 <button
-                                                    class="reply-edit-btn text-xs text-gray-400 hover:text-blue-600 transition"
+                                                    class="reply-edit-btn text-xs text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
                                                     data-reply-id="{{ $reply->id }}">
                                                     <i class="fas fa-pen mr-1"></i> Edit
                                                 </button>
                                                 <button
-                                                    class="reply-delete-btn text-xs text-gray-400 hover:text-red-600 transition"
+                                                    class="reply-delete-btn text-xs text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition"
                                                     data-reply-id="{{ $reply->id }}">
                                                     <i class="fas fa-trash mr-1"></i> Hapus
                                                 </button>
@@ -257,7 +256,7 @@
 
                                     <!-- Reply Display Mode -->
                                     <div class="reply-display-mode">
-                                        <div class="reply-content markdown-body prose prose-sm max-w-none">
+                                        <div class="reply-content markdown-body prose prose-sm dark:prose-invert max-w-none">
                                             {!! Str::markdown($reply->content) !!}
                                         </div>
                                     </div>
@@ -268,14 +267,14 @@
                                             @csrf
                                             @method('PUT')
                                             <textarea name="content" rows="4"
-                                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 resize-y text-sm">{{ $reply->content }}</textarea>
+                                                class="w-full px-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 resize-y text-sm dark:bg-slate-900 dark:text-white dark:placeholder-gray-500">{{ $reply->content }}</textarea>
                                             <div class="flex gap-2 mt-2">
                                                 <button type="submit"
                                                     class="px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary/90 transition">
                                                     Simpan
                                                 </button>
                                                 <button type="button"
-                                                    class="cancel-reply-edit px-3 py-1.5 border border-gray-300 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition">
+                                                    class="cancel-reply-edit px-3 py-1.5 border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition">
                                                     Batal
                                                 </button>
                                             </div>
@@ -286,12 +285,12 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-14 bg-gray-50/50 rounded-2xl">
-                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-comments text-gray-300 text-xl"></i>
+                    <div class="text-center py-14 bg-gray-50/50 dark:bg-slate-900/50 rounded-2xl">
+                        <div class="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-comments text-gray-300 dark:text-slate-600 text-xl"></i>
                         </div>
-                        <h4 class="font-semibold text-gray-800 mb-1">Belum ada balasan</h4>
-                        <p class="text-sm text-gray-400">Jadilah yang pertama merespon diskusi ini</p>
+                        <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-1">Belum ada balasan</h4>
+                        <p class="text-sm text-gray-400 dark:text-gray-500">Jadilah yang pertama merespon diskusi ini</p>
                     </div>
                 @endforelse
             </div>
@@ -304,13 +303,13 @@
         <!-- Reply Form -->
         @auth
             <div class="sticky bottom-6 z-10">
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-lg transition-all duration-200 overflow-hidden"
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-lg transition-all duration-200 overflow-hidden"
                     id="replyComposer">
-                    <div id="compactComposer" class="p-4 cursor-pointer hover:bg-gray-50/50 transition-colors duration-150"
+                    <div id="compactComposer" class="p-4 cursor-pointer hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors duration-150"
                         role="button" tabindex="0" aria-expanded="false">
                         <div class="flex items-center gap-3">
                             <div
-                                class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/10 to-blue-100 flex items-center justify-center text-primary font-semibold text-xs overflow-hidden flex-shrink-0">
+                                class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/10 to-blue-100 dark:from-primary/20 dark:to-blue-900/30 flex items-center justify-center text-primary font-semibold text-xs overflow-hidden flex-shrink-0">
                                 @if (auth()->user()->avatar)
                                     @if (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL))
                                         <img src="{{ auth()->user()->avatar }}" class="w-full h-full object-cover">
@@ -323,10 +322,10 @@
                                 @endif
                             </div>
                             <div
-                                class="flex-1 text-gray-400 text-sm border border-gray-200 rounded-xl px-4 py-2.5 hover:border-gray-300 hover:bg-white transition-all">
-                                <span class="text-gray-400">Tulis balasan...</span>
+                                class="flex-1 text-gray-400 dark:text-gray-500 text-sm border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2.5 hover:border-gray-300 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800 transition-all">
+                                <span class="text-gray-400 dark:text-gray-500">Tulis balasan...</span>
                             </div>
-                            <div class="text-gray-300 text-sm">
+                            <div class="text-gray-300 dark:text-slate-600 text-sm">
                                 <i class="fas fa-chevron-down text-xs transition-transform duration-200"></i>
                             </div>
                         </div>
@@ -337,7 +336,7 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-2">
                                     <div
-                                        class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/10 to-blue-100 flex items-center justify-center text-primary font-semibold text-xs overflow-hidden flex-shrink-0">
+                                        class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/10 to-blue-100 dark:from-primary/20 dark:to-blue-900/30 flex items-center justify-center text-primary font-semibold text-xs overflow-hidden flex-shrink-0">
                                         @if (auth()->user()->avatar)
                                             @if (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL))
                                                 <img src="{{ auth()->user()->avatar }}" class="w-full h-full object-cover">
@@ -349,10 +348,10 @@
                                             {{ getInitials(auth()->user()->name) }}
                                         @endif
                                     </div>
-                                    <span class="text-sm font-medium text-gray-700">Tulis Balasan</span>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Tulis Balasan</span>
                                 </div>
                                 <button id="collapseBtn"
-                                    class="text-gray-400 hover:text-gray-600 transition p-1 rounded-lg hover:bg-gray-100">
+                                    class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800">
                                     <i class="fas fa-times text-sm"></i>
                                 </button>
                             </div>
@@ -361,12 +360,12 @@
                                 @csrf
 
                                 <div
-                                    class="border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50 transition-all">
+                                    class="border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50 transition-all">
                                     <textarea name="content" id="replyContent" rows="5" placeholder="Tulis komentar atau saran Anda..."
-                                        class="w-full px-4 py-3 resize-y focus:outline-none text-gray-700 text-sm">{{ old('content') }}</textarea>
+                                        class="w-full px-4 py-3 resize-y focus:outline-none text-gray-700 dark:text-gray-200 text-sm dark:bg-slate-900 dark:placeholder-gray-500">{{ old('content') }}</textarea>
                                 </div>
 
-                                <div class="text-xs text-gray-400 mt-2">
+                                <div class="text-xs text-gray-400 dark:text-gray-500 mt-2">
                                     Mendukung Markdown: **bold** • *italic* • `code` • ```code block```
                                 </div>
 
@@ -375,7 +374,7 @@
                                 @enderror
 
                                 <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
-                                    <div class="text-xs text-gray-400">
+                                    <div class="text-xs text-gray-400 dark:text-gray-500">
                                         <span id="charCount">0</span>/1000 karakter
                                     </div>
                                     <button type="submit" id="submitReplyBtn"
@@ -387,7 +386,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="text-xs text-gray-400 mt-3 text-center">
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-3 text-center">
                     Dengan mengirim balasan, Anda menyetujui <a href="#" class="text-primary">Panduan Komunitas</a>
                     VEXORA.
                 </p>
@@ -635,12 +634,12 @@
                 })();
             </script>
         @else
-            <div class="bg-gray-50/50 rounded-2xl p-8 text-center border border-gray-100 mb-8">
-                <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-lock text-gray-400 text-lg"></i>
+            <div class="bg-gray-50/50 dark:bg-slate-900/50 rounded-2xl p-8 text-center border border-gray-100 dark:border-slate-700 mb-8">
+                <div class="w-14 h-14 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-lock text-gray-400 dark:text-slate-600 text-lg"></i>
                 </div>
-                <h3 class="font-semibold text-gray-800 mb-1">Login untuk ikut berdiskusi</h3>
-                <p class="text-sm text-gray-400 mb-4">Silakan login untuk memberikan balasan atau pertanyaan</p>
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-1">Login untuk ikut berdiskusi</h3>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mb-4">Silakan login untuk memberikan balasan atau pertanyaan</p>
                 <a href="{{ route('login') }}"
                     class="inline-block px-5 py-2 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition text-sm">Login
                     Sekarang</a>
@@ -649,27 +648,27 @@
 
         <!-- Related Threads -->
         @if ($relatedThreads && $relatedThreads->count() > 0)
-            <div class="pt-6 border-t border-gray-100">
-                <h3 class="font-semibold text-gray-900 mb-5">Diskusi Terkait</h3>
+            <div class="pt-6 border-t border-gray-100 dark:border-slate-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-5">Diskusi Terkait</h3>
                 <div class="space-y-3">
                     @foreach ($relatedThreads as $related)
                         <a href="{{ route('forum.show', $related->slug) }}"
-                            class="block bg-white rounded-xl p-4 border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all duration-200 group">
+                            class="block bg-white dark:bg-slate-900 rounded-xl p-4 border border-gray-100 dark:border-slate-700 hover:border-gray-200 dark:hover:border-slate-600 hover:shadow-sm transition-all duration-200 group">
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-1.5">
                                         <span
-                                            class="px-2 py-0.5 rounded-full text-xs font-medium {{ $categoryColors[$related->category?->color] ?? 'bg-gray-100 text-gray-700' }}">
+                                            class="px-2 py-0.5 rounded-full text-xs font-medium {{ $categoryColors[$related->category?->color] ?? 'bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300' }}">
                                             {{ $related->category?->name ?? 'Umum' }}
                                         </span>
                                         <span
-                                            class="text-xs text-gray-400">{{ $related->created_at->diffForHumans() }}</span>
+                                            class="text-xs text-gray-400 dark:text-gray-500">{{ $related->created_at->diffForHumans() }}</span>
                                     </div>
                                     <h4
-                                        class="font-medium text-gray-800 group-hover:text-primary transition line-clamp-1 text-sm">
+                                        class="font-medium text-gray-800 dark:text-gray-200 group-hover:text-primary transition line-clamp-1 text-sm">
                                         {{ $related->title }}
                                     </h4>
-                                    <div class="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                                    <div class="flex items-center gap-3 mt-1.5 text-xs text-gray-400 dark:text-gray-500">
                                         <span class="flex items-center gap-1">
                                             <i class="far fa-comment text-xs"></i>
                                             {{ number_format($related->replies_count) }}
@@ -680,7 +679,7 @@
                                     </div>
                                 </div>
                                 <i
-                                    class="fas fa-chevron-right text-gray-300 text-xs group-hover:text-primary group-hover:translate-x-0.5 transition-all"></i>
+                                    class="fas fa-chevron-right text-gray-300 dark:text-slate-600 text-xs group-hover:text-primary group-hover:translate-x-0.5 transition-all"></i>
                             </div>
                         </a>
                     @endforeach
@@ -713,6 +712,10 @@
                 color: #374151;
             }
 
+            .dark .markdown-body {
+                color: #e5e7eb;
+            }
+
             .markdown-body p {
                 margin-bottom: 1rem;
             }
@@ -729,6 +732,13 @@
                 font-weight: 600;
                 margin-top: 1.25rem;
                 margin-bottom: 0.75rem;
+            }
+
+            .dark .markdown-body h1,
+            .dark .markdown-body h2,
+            .dark .markdown-body h3,
+            .dark .markdown-body h4 {
+                color: #f1f5f9;
             }
 
             .markdown-body h1 {
@@ -762,6 +772,11 @@
                 font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
             }
 
+            .dark .markdown-body code:not(pre code) {
+                background-color: #334155;
+                color: #f87171;
+            }
+
             .markdown-body pre {
                 background-color: #1e293b;
                 color: #e2e8f0;
@@ -786,6 +801,11 @@
                 margin: 1rem 0;
                 color: #6b7280;
                 font-style: italic;
+            }
+
+            .dark .markdown-body blockquote {
+                border-left-color: #475569;
+                color: #9ca3af;
             }
 
             .line-clamp-1 {
