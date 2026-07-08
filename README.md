@@ -91,11 +91,11 @@ Open http://localhost:8000 in your browser.
 
 The project includes visual assets under the public image folder. You can preview them here while preparing additional app screenshots:
 
-![VEXORA Hero Banner](public/assets/images/vexora-bg.png)
-
 ![VEXORA Logo](public/assets/images/vexora-logo.png)
 
-![About / Profile Illustration](public/assets/images/profile.jpeg)
+![VEXORA Page Home](public/assets/images/vexora1.png)
+
+![VEXORA Page Catalog](public/assets/images/vexora2.png)
 
 ## Demo Account
 
